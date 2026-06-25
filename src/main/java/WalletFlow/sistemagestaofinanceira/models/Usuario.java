@@ -11,37 +11,31 @@ public class Usuario {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @NotBlank
-    @Min(10)
-    @Max(50)
+    @NotBlank(message = "O nome é obrigatório")
+    @Size(min = 5, max = 50, message = "O nome deve ter entre 5 e 50 caracteres")
     private String nome;
 
-    @Email
-    @NotBlank
+    @NotBlank(message = "O e-mail é obrigatório")
+    @Email(message = "Formato de e-mail inválido")
     private String email;
 
-    @NotBlank
+    @NotBlank(message = "A senha é obrigatória")
     private String senha;
 
     @OneToMany(mappedBy = "usuario")
-    private List<Transacao> trasacoes;
+    private List<Transacao> transacoes;
 
     public Usuario(){}
 
-    public Usuario(Long id, String nome, String email, String senha, List<Transacao> trasacoes) {
-        this.id = id;
+    public Usuario(String nome, String email, String senha, List<Transacao> trasacoes) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.trasacoes = trasacoes;
+        this.transacoes = trasacoes;
     }
 
     public Long getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNome() {
