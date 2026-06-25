@@ -11,7 +11,6 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class Transacao {
     @Id
@@ -27,4 +26,13 @@ public class Transacao {
     private TipoTransacao tipo;
     private Categoria categoria;
     private LocalDate data;
+
+    public Transacao(Usuario usuario, String descricao, double valor, TipoTransacao tipo, Categoria categoria, LocalDate data) {
+        this.usuario = usuario;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.tipo = tipo;
+        this.categoria = categoria;
+        this.data = data;
+    }
 }

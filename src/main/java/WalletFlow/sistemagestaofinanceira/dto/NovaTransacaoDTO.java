@@ -22,7 +22,4 @@ public class NovaTransacaoDTO {
     @NotNull(message = "A data é obrigatória")
     @PastOrPresent(message = "A data não pode ser futura")
     private LocalDate data;
-
-    @NotNull(message = "O usuário é obrigatório")
-    private Long usuarioId;
 }
