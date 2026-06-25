@@ -1,4 +1,4 @@
-package WalletFlow.sistemagestaofinanceira.Enums;
+package WalletFlow.sistemagestaofinanceira.enums;
 
 public enum Categoria {
     ALIMENTACAO,
