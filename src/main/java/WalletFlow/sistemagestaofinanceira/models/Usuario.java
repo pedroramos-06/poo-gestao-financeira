@@ -22,16 +22,12 @@ public class Usuario {
     @NotBlank(message = "A senha é obrigatória")
     private String senha;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Transacao> transacoes;
-
     public Usuario(){}
 
-    public Usuario(String nome, String email, String senha, List<Transacao> trasacoes) {
+    public Usuario(String nome, String email, String senha) {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
-        this.transacoes = trasacoes;
     }
 
     public Long getId() {
