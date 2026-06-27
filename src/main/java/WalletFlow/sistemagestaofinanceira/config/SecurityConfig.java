@@ -27,14 +27,18 @@ public class SecurityConfig {
                 http.formLogin(form -> form
                     .loginPage("/user/login")
                     .loginProcessingUrl("/user/login")
-                    .defaultSuccessUrl("/transacao", true) //ou outro endpoint
+                    .defaultSuccessUrl("/transacoes", true) //ou outro endpoint
                     .failureUrl("/user/login?error")
                     .usernameParameter("email")
                     .passwordParameter("senha")
                     .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/user/login?logout")
+                        .logoutUrl("/logout") // Define a URL que aciona o logout (opcional, já que /logout é o padrão)
+                        .logoutSuccessUrl("/user/login?logout") // Para onde o usuário vai após deslogar
+                        .invalidateHttpSession(true) // Invalida a sessão atual do navegador
+                        .clearAuthentication(true) // Limpa o contexto de segurança
+                        .permitAll()
                 );
 
         return http.build();

@@ -44,6 +44,6 @@ public class UserController {
             return "user/register";
         }
 
-        return "redirect:/transacao";
+        return "redirect:/transacoes";
     }
 }

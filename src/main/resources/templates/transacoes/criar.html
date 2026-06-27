@@ -1,0 +1,64 @@
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <form th:action="@{/transacoes}" method="post" th:object="${transacao}">
+        <div class="mb-3" th:if="${#fields.hasErrors('*')}">
+            <ul>
+                <li th:each="erro : ${#fields.errors('*')}"
+                    th:text="${erro}"
+                    style="color: red"></li>
+            </ul>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">
+                Descrição:
+            </label>
+            <input class="form-control" type="text" th:field="*{descricao}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Valor:
+            </label>
+            <input class="form-control" type="number" step="0.01" th:field="*{valor}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Tipo:
+            </label>
+            <select class="form-select" th:field="*{tipo}">
+                <option th:each="tipo : ${T(WalletFlow.sistemagestaofinanceira.enums.TipoTransacao).values()}"
+                        th:value="${tipo}"
+                        th:text="${tipo}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Categoria:
+            </label>
+            <select class="form-select" th:field="*{categoria}">
+                <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
+                        th:value="${cat}"
+                        th:text="${cat}">
+                </option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">
+                Data:
+            </label>
+            <input class="form-control" type="date" th:field="*{data}">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+</body>
+</html>
