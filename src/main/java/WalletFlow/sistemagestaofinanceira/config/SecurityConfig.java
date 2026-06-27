@@ -34,10 +34,10 @@ public class SecurityConfig {
                     .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // Define a URL que aciona o logout (opcional, já que /logout é o padrão)
-                        .logoutSuccessUrl("/user/login?logout") // Para onde o usuário vai após deslogar
-                        .invalidateHttpSession(true) // Invalida a sessão atual do navegador
-                        .clearAuthentication(true) // Limpa o contexto de segurança
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/user/login?logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
                         .permitAll()
                 );
 
