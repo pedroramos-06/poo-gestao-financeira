@@ -3,9 +3,10 @@ package WalletFlow.sistemagestaofinanceira.service;
 import WalletFlow.sistemagestaofinanceira.dto.NovoUsuarioDTO;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.repository.UsuarioRepository;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,17 @@ public class UsuarioService implements UserDetailsService {
         String senhaHash = passwordEncoder.encode(usuario.getSenha());
         usuario.setSenha(senhaHash);
 
-        return repository.save(usuario);
+        Usuario usuarioSalvo = repository.save(usuario);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                usuarioSalvo,
+                null,
+                usuarioSalvo.getAuthorities()
+        );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        return usuarioSalvo;
     }
 
     @Override
