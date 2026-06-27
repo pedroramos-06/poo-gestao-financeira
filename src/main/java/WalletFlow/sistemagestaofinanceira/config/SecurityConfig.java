@@ -20,7 +20,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/h2-console/**").permitAll()
+                        .requestMatchers("/user/login", "/user/register", "/h2-console/**").permitAll()
 
                         .anyRequest().authenticated()
                 );
@@ -28,13 +28,13 @@ public class SecurityConfig {
                     .loginPage("/user/login")
                     .loginProcessingUrl("/user/login")
                     .defaultSuccessUrl("/transacao", true) //ou outro endpoint
-                    .failureUrl("user/login?error")
+                    .failureUrl("/user/login?error")
                     .usernameParameter("email")
                     .passwordParameter("senha")
                     .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutSuccessUrl("/login?logout")
+                        .logoutSuccessUrl("/user/login?logout")
                 );
 
         return http.build();
