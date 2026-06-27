@@ -35,7 +35,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="confirmaSenha" class="form-label">Confirme a senha</label>
-                        <input type="password" class="form-control" id="confirmaSenha" name="senha" placeholder="Confirme sua senha">
+                        <input type="password" class="form-control" id="confirmaSenha" name="confirmaSenha" placeholder="Confirme sua senha">
                     </div>
                     <div class="d-grid">
                         <button type="submit" class="btn btn-success">Cadastrar</button>
@@ -53,7 +53,7 @@
         const senha = document.getElementById("senha");
         const confirmaSenha = document.getElementById("confirmaSenha");
 
-        function validarEmail() {
+        function validarSenha() {
             if (senha.value !== confirmaSenha.value) {
                 confirmaSenha.setCustomValidity("As senhas informadas não correspondem.");
             } else {
@@ -61,7 +61,7 @@
             }
         }
 
-        confirmaSenha.addEventListener("input", validarEmail);
+        confirmaSenha.addEventListener("input", validarSenha);
 
         document.getElementById("form").addEventListener("submit", function(event) {
             if (!this.checkValidity()) {

@@ -44,6 +44,6 @@ public class UserController {
             return "user/register";
         }
 
-        return "/home"; //retornar a pagina inicial outro endpoint (talvez listar transações)
+        return "redirect:/transacao";
     }
 }
