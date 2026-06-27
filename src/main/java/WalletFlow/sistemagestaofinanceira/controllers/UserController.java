@@ -11,39 +11,39 @@ import org.springframework.web.bind.annotation.*;
 
 
 @Controller
-@RequestMapping("/")
-public class AuthController {
+@RequestMapping("/user")
+public class UserController {
 
     private final UsuarioService usuarioService;
 
-    public AuthController(UsuarioService usuarioService) {
+    public UserController(UsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
 
     @GetMapping("/login")
     public String formLogin() {
-        return "auth/login";
+        return "user/login";
     }
 
     @GetMapping("/register")
     public String formRegister(Model model) {
         model.addAttribute("usuario", new NovoUsuarioDTO());
-        return "auth/register";
+        return "user/register";
     }
 
     @PostMapping("/register")
     public String register (@Valid @ModelAttribute("usuario")NovoUsuarioDTO DTO, BindingResult result, Model model) {
         if(result.hasErrors()){
-            return "auth/register";
+            return "user/register";
         }
 
         try {
             usuarioService.register(DTO);
         } catch (DataIntegrityViolationException e) {
             result.rejectValue("email", "error.usuario", "E-mail já cadastrado");
-            return "auth/register";
+            return "user/register";
         }
 
-        return "auth/login"; //retornar a pagina inicial outro endpoint (talvez listar transações)
+        return "/home"; //retornar a pagina inicial outro endpoint (talvez listar transações)
     }
 }

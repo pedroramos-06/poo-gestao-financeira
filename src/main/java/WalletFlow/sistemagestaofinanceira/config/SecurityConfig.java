@@ -25,10 +25,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 );
                 http.formLogin(form -> form
-                    .loginPage("/login")
-                    .loginProcessingUrl("/login")
-                    .defaultSuccessUrl("/home", true) //ou outro endpoint
-                    .failureUrl("/login?error")
+                    .loginPage("/user/login")
+                    .loginProcessingUrl("/user/login")
+                    .defaultSuccessUrl("/transacao", true) //ou outro endpoint
+                    .failureUrl("user/login?error")
                     .usernameParameter("email")
                     .passwordParameter("senha")
                     .permitAll()
