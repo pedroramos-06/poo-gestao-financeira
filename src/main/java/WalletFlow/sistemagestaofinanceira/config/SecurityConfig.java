@@ -27,14 +27,18 @@ public class SecurityConfig {
                 http.formLogin(form -> form
                     .loginPage("/user/login")
                     .loginProcessingUrl("/user/login")
-                    .defaultSuccessUrl("/transacao", true) //ou outro endpoint
+                    .defaultSuccessUrl("/transacoes", true) //ou outro endpoint
                     .failureUrl("/user/login?error")
                     .usernameParameter("email")
                     .passwordParameter("senha")
                     .permitAll()
                 )
                 .logout(logout -> logout
+                        .logoutUrl("/logout")
                         .logoutSuccessUrl("/user/login?logout")
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .permitAll()
                 );
 
         return http.build();
