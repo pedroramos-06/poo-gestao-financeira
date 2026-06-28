@@ -1,5 +1,6 @@
 package WalletFlow.sistemagestaofinanceira.controllers;
 
+import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
@@ -23,8 +24,8 @@ public class TransacaoController {
     }
 
     @GetMapping
-    public String listar(@AuthenticationPrincipal Usuario usuario, Model model) {
-        List<Transacao> transacoes = transacaoService.listarPorUsuario(usuario);
+    public String listar(@AuthenticationPrincipal Usuario usuario, @ModelAttribute("filtros") FiltrosTransacaoDTO filtros, Model model) {
+        List<Transacao> transacoes = transacaoService.listar(usuario, filtros);
         model.addAttribute("transacoes", transacoes);
 
         return "transacoes/listar";

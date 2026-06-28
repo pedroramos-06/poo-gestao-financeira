@@ -1,5 +1,6 @@
 <html>
 <head>
+    <meta charset="UTF-8">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body>
@@ -34,6 +35,44 @@
         </tbody>
     </table>
     <a href="/transacoes/criar" class="btn btn-primary">Nova Transação</a>
+    <form method="get" th:action="@{/transacoes}" th:object="${filtros}">
+        <div class="mb-3">
+            <label class="form-label">
+                Data Início:
+                <input class="form-control" type="date" th:field="*{dataInicio}">
+            </label>
+
+            <label class="form-label">
+                Data Fim:
+                <input class="form-control" type="date" th:field="*{dataFim}">
+            </label>
+
+            <label class="form-label">
+                Categoria:
+                <select class="form-select" th:field="*{categoria}">
+                    <option value="" selected>Todas</option>
+                    <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
+                            th:value="${cat}"
+                            th:text="${cat}">
+                    </option>
+                </select>
+            </label>
+
+            <label class="form-label">
+                Tipo:
+                <select class="form-select" th:field="*{tipo}">
+                    <option value="" selected>Todos</option>
+                    <option th:each="tipo : ${T(WalletFlow.sistemagestaofinanceira.enums.TipoTransacao).values()}"
+                            th:value="${tipo}"
+                            th:text="${tipo}">
+                    </option>
+                </select>
+            </label>
+
+            <a href="/transacoes" class="btn btn-secondary">Limpar</a>
+            <button class="btn btn-primary" type="submit">Filtrar</button>
+        </div>
+    </form>
 </div>
 </body>
 </html>
