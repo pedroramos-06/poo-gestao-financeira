@@ -24,8 +24,8 @@
             <tr th:each="transacao : ${transacoes}">
                 <td th:text="${transacao.data}"></td>
                 <td th:text="${transacao.descricao}"></td>
-                <td th:text="${transacao.categoria}"></td>
-                <td th:text="${transacao.tipo}"></td>
+                <td th:text="${transacao.categoria.descricao}"></td>
+                <td th:text="${transacao.tipo.descricao}"></td>
                 <td th:text="${transacao.valor}"></td>
                 <td>
                     <a th:href="@{/transacoes/{id}/editar(id=${transacao.id})}" class="btn btn-secondary">Editar</a>
@@ -53,7 +53,7 @@
                     <option value="" selected>Todas</option>
                     <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
                             th:value="${cat}"
-                            th:text="${cat}">
+                            th:text="${cat.descricao}">
                     </option>
                 </select>
             </label>
@@ -64,7 +64,7 @@
                     <option value="" selected>Todos</option>
                     <option th:each="tipo : ${T(WalletFlow.sistemagestaofinanceira.enums.TipoTransacao).values()}"
                             th:value="${tipo}"
-                            th:text="${tipo}">
+                            th:text="${tipo.descricao}">
                     </option>
                 </select>
             </label>

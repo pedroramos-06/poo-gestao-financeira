@@ -3,8 +3,6 @@ package WalletFlow.sistemagestaofinanceira.dto;
 import WalletFlow.sistemagestaofinanceira.enums.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,11 +25,9 @@ public class NovaTransacaoDTO {
     private double valor;
 
     @NotNull(message = "O tipo da transação é obrigatório")
-    @Enumerated(EnumType.STRING)
     private TipoTransacao tipo;
 
     @NotNull(message = "A categoria é obrigatória")
-    @Enumerated(EnumType.STRING)
     private Categoria categoria;
 
     @NotNull(message = "A data é obrigatória")
