@@ -9,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -42,8 +41,11 @@ public class UserController {
         } catch (DataIntegrityViolationException e) {
             result.rejectValue("email", "error.usuario", "E-mail já cadastrado");
             return "user/register";
+        } catch (Exception e) {
+            result.rejectValue(null,"error.usuario", "Um erro inesperado ocorreu, tente novamente!" );
+            return "user/register";
         }
 
-        return "redirect:/transacoes";
+        return "redirect:/dashboard";
     }
 }
