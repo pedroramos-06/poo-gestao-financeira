@@ -51,6 +51,28 @@ public class TransacaoController {
     public String excluir(@PathVariable Long id) {
         transacaoService.excluir(id);
 
-        return "redirect:/transacoes/";
+        return "redirect:/transacoes";
+    }
+
+    @GetMapping("/{id}/editar")
+    public String editar(@PathVariable Long id, Model model) {
+        try {
+            Transacao t = transacaoService.buscarPorId(id);
+            model.addAttribute("transacao", new NovaTransacaoDTO(t));
+
+            return "transacoes/criar";
+        } catch (RuntimeException e) {
+            return "redirect:/transacoes";
+        }
+    }
+
+    @PutMapping
+    public String atualizar(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request, BindingResult result, @AuthenticationPrincipal Usuario usuario) {
+        if(result.hasErrors()) {
+            return "transacoes/criar";
+        }
+
+        transacaoService.editar(request, usuario);
+        return "redirect:/transacoes";
     }
 }

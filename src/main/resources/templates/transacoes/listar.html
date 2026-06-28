@@ -27,6 +27,7 @@
                 <td th:text="${transacao.tipo}"></td>
                 <td th:text="${transacao.valor}"></td>
                 <td>
+                    <a th:href="@{/transacoes/{id}/editar(id=${transacao.id})}" class="btn btn-secondary">Editar</a>
                     <a th:href="@{/transacoes/{id}/excluir(id=${transacao.id})}" class="btn btn-danger">Excluir</a>
                 </td>
             </tr>

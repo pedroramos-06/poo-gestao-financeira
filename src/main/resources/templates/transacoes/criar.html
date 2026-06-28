@@ -4,7 +4,12 @@
 </head>
 <body>
 <div class="container">
+    <h1 th:text="${transacao.id} ? 'Editar Transação' : 'Nova Transação'"></h1>
+
     <form th:action="@{/transacoes}" method="post" th:object="${transacao}">
+        <input th:if="${transacao.id}" type="hidden" name="_method" value="put"> <!-- Muda o method do form caso esteja editando uma transação -->
+        <input type="hidden" th:field="*{id}">
+
         <div class="mb-3" th:if="${#fields.hasErrors('*')}">
             <ul>
                 <li th:each="erro : ${#fields.errors('*')}"

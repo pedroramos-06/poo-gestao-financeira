@@ -27,7 +27,19 @@ public class TransacaoService {
         return transacaoRepository.findByUsuarioId(usuario.getId());
     }
 
+    public Transacao buscarPorId(Long id) {
+        return transacaoRepository.findById(id).orElseThrow(() -> new RuntimeException("Transação não encontrada"));
+    }
+
     public void excluir(Long id) {
         transacaoRepository.deleteById(id);
+    }
+
+    public void editar(NovaTransacaoDTO dto, Usuario usuario) {
+        Transacao transacao = dto.toEntity();
+        transacao.setUsuario(usuario);
+        transacao.setId(dto.getId());
+
+        transacaoRepository.save(transacao);
     }
 }
