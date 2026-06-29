@@ -1,0 +1,38 @@
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <a href="/metas" class="btn btn-primary">Voltar</a>
+    <h1 th:text="${meta.id} ? 'Editar meta' : 'Nova Meta'"></h1>
+
+    <form th:action="@{/metas}" method="post" th:object="${meta}">
+        <input th:if="${meta.id}" type="hidden" name="_method" value="put"> <!-- Muda o method do form caso esteja editando uma meta -->
+        <input type="hidden" th:field="*{id}">
+
+        <div class="mb-3">
+            <label class="form-label">
+                Valor:
+            </label>
+            <input class="form-control" type="number" step="0.01" th:field="*{valor}">
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label" for="data">Mês Alvo</label>
+            <input type="month"
+                   id="data"
+                   th:field="*{data}"
+                   class="form-control"
+                   required>
+            <small th:if="${#fields.hasErrors('data')}"
+                   th:errors="*{data}"
+                   class="text-danger">
+            </small>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+</body>
+</html>

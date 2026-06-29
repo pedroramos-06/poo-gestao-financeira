@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface MetaRepository extends JpaRepository<Meta, Long> {
     List<Meta> findByUsuarioId(Long usuarioId);
-    Optional<Meta> findByData(YearMonth data);
+    Optional<Meta> findByUsuarioIdAndData(Long usuarioId, YearMonth data);
 }
