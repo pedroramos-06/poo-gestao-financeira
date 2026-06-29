@@ -7,9 +7,7 @@ import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Optional;
 
 @Service
 public class DashboardService {
@@ -22,44 +20,51 @@ public class DashboardService {
         this.metaRepository = metaRepository;
     }
 
-    public DashboardDTO buscarResumo(Long usuarioId, YearMonth periodo) {
-
-        LocalDate inicio = periodo.atDay(1);
-        LocalDate fim = periodo.atEndOfMonth();
-
-        double entradas = transacaoRepository.somarPorTipo(
-                usuarioId,
-                TipoTransacao.ENTRADA,
-                inicio,
-                fim
-        );
-        double saidas = transacaoRepository.somarPorTipo(
-                usuarioId,
-                TipoTransacao.SAIDA,
-                inicio,
-                fim
-        );
-        Optional<Meta> metaOptional = metaRepository.findByData(periodo);
-
-        double meta = 0.0;
-        double metaAtingida = 0.0;
-
-        if (metaOptional.isPresent()) {
-            meta = metaOptional.get().getValor();
-
-            if (meta > 0) {
-                metaAtingida = (saidas * 100) / meta;
-            }
-        }
-
-        double saldo = entradas - saidas;
+    public DashboardDTO getResumo(Long usuarioId, YearMonth periodo) {
+        double entradas = getEntradas(usuarioId, periodo);
+        double saidas = getSaidas(usuarioId, periodo);
+        double meta = getMeta(usuarioId, periodo);
+        double metaAtingida = calcularMetaAtingida(saidas, meta);
+        double saldo = transacaoRepository.getSaldo(usuarioId);
 
         return new DashboardDTO(
+                periodo,
                 saldo,
                 entradas,
                 saidas,
                 meta,
                 metaAtingida
         );
+    }
+
+    private double getEntradas(Long usuarioId, YearMonth periodo) {
+        return transacaoRepository.somarPorTipo(
+                usuarioId,
+                TipoTransacao.ENTRADA,
+                periodo.atDay(1),
+                periodo.atEndOfMonth()
+        );
+    }
+
+    private double getSaidas(Long usuarioId, YearMonth periodo) {
+        return transacaoRepository.somarPorTipo(
+                usuarioId,
+                TipoTransacao.SAIDA,
+                periodo.atDay(1),
+                periodo.atEndOfMonth()
+        );
+    }
+
+    private double getMeta(Long usuarioId, YearMonth periodo) {
+        return metaRepository.findByUsuarioIdAndData(usuarioId, periodo)
+                .map(Meta::getValor)
+                .orElse(0.0);
+    }
+
+    private double calcularMetaAtingida(double saidas, double meta) {
+        if (meta <= 0) {
+            return 0.0;
+        }
+        return (saidas * 100) / meta;
     }
 }

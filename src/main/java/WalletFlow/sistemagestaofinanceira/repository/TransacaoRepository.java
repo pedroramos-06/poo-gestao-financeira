@@ -36,4 +36,26 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
         @Param("categoria") Categoria categoria,
         @Param("tipo") TipoTransacao tipo
     );
+
+    @Query("""
+        SELECT COALESCE(SUM(t.valor), 0)
+        FROM Transacao t
+        WHERE t.usuario.id = :usuarioId
+          AND t.tipo = :tipo
+          AND t.data BETWEEN :inicio AND :fim
+    """)
+    double somarPorTipo(
+            @Param("usuarioId") Long usuarioId,
+            @Param("tipo") TipoTransacao tipo,
+            @Param("inicio") LocalDate inicio,
+            @Param("fim") LocalDate fim
+    );
+
+    @Query("""
+        SELECT COALESCE(SUM(CASE WHEN t.tipo = 'ENTRADA' THEN t.valor ELSE 0 END), 0) -\s
+               COALESCE(SUM(CASE WHEN t.tipo = 'SAIDA' THEN t.valor ELSE 0 END), 0)
+        FROM Transacao t
+        WHERE t.usuario.id = :usuarioId
+    """)
+    double getSaldo( @Param("usuarioId") Long usuarioId );
 }
