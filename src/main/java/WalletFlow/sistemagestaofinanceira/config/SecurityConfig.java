@@ -24,6 +24,12 @@ public class SecurityConfig {
 
                         .anyRequest().authenticated()
                 );
+                http.headers(headers -> headers
+                        .frameOptions(frame -> frame.sameOrigin())
+                );
+                http.csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/h2-console/**")
+                );
                 http.formLogin(form -> form
                     .loginPage("/user/login")
                     .loginProcessingUrl("/user/login")

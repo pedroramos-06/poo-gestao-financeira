@@ -4,7 +4,12 @@
 </head>
 <body>
 <div class="container">
+    <h1 th:text="${transacao.id} ? 'Editar Transação' : 'Nova Transação'"></h1>
+
     <form th:action="@{/transacoes}" method="post" th:object="${transacao}">
+        <input th:if="${transacao.id}" type="hidden" name="_method" value="put"> <!-- Muda o method do form caso esteja editando uma transação -->
+        <input type="hidden" th:field="*{id}">
+
         <div class="mb-3" th:if="${#fields.hasErrors('*')}">
             <ul>
                 <li th:each="erro : ${#fields.errors('*')}"
@@ -33,7 +38,7 @@
             <select class="form-select" th:field="*{tipo}">
                 <option th:each="tipo : ${T(WalletFlow.sistemagestaofinanceira.enums.TipoTransacao).values()}"
                         th:value="${tipo}"
-                        th:text="${tipo}">
+                        th:text="${tipo.descricao}">
                 </option>
             </select>
         </div>
@@ -45,7 +50,7 @@
             <select class="form-select" th:field="*{categoria}">
                 <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
                         th:value="${cat}"
-                        th:text="${cat}">
+                        th:text="${cat.descricao}">
                 </option>
             </select>
         </div>

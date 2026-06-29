@@ -23,8 +23,13 @@ public class Transacao {
 
     private String descricao;
     private double valor;
+
+    @Enumerated(EnumType.STRING)
     private TipoTransacao tipo;
+
+    @Enumerated(EnumType.STRING)
     private Categoria categoria;
+
     private LocalDate data;
 
     public Transacao(String descricao, double valor, TipoTransacao tipo, Categoria categoria, LocalDate data) {

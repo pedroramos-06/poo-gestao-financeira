@@ -1,5 +1,6 @@
 package WalletFlow.sistemagestaofinanceira.controllers;
 
+import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
@@ -23,8 +24,8 @@ public class TransacaoController {
     }
 
     @GetMapping
-    public String listar(@AuthenticationPrincipal Usuario usuario, Model model) {
-        List<Transacao> transacoes = transacaoService.listarPorUsuario(usuario);
+    public String listar(@AuthenticationPrincipal Usuario usuario, @ModelAttribute("filtros") FiltrosTransacaoDTO filtros, Model model) {
+        List<Transacao> transacoes = transacaoService.listar(usuario, filtros);
         model.addAttribute("transacoes", transacoes);
 
         return "transacoes/listar";
@@ -51,6 +52,28 @@ public class TransacaoController {
     public String excluir(@PathVariable Long id) {
         transacaoService.excluir(id);
 
-        return "redirect:/transacoes/";
+        return "redirect:/transacoes";
+    }
+
+    @GetMapping("/{id}/editar")
+    public String editar(@PathVariable Long id, Model model) {
+        try {
+            Transacao t = transacaoService.buscarPorId(id);
+            model.addAttribute("transacao", new NovaTransacaoDTO(t));
+
+            return "transacoes/criar";
+        } catch (RuntimeException e) {
+            return "redirect:/transacoes";
+        }
+    }
+
+    @PutMapping
+    public String atualizar(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request, BindingResult result, @AuthenticationPrincipal Usuario usuario) {
+        if(result.hasErrors()) {
+            return "transacoes/criar";
+        }
+
+        transacaoService.editar(request, usuario);
+        return "redirect:/transacoes";
     }
 }

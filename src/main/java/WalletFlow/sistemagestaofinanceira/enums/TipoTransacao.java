@@ -1,6 +1,15 @@
 package WalletFlow.sistemagestaofinanceira.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum TipoTransacao {
-    ENTRADA,
-    SAIDA
+    ENTRADA("Entrada"),
+    SAIDA("Saída");
+
+    private final String descricao;
+
+    TipoTransacao(String descricao) {
+        this.descricao = descricao;
+    }
 }
