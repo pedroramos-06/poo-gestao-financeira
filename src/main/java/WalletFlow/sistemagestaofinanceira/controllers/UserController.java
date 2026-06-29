@@ -1,6 +1,7 @@
 package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.NovoUsuarioDTO;
+import WalletFlow.sistemagestaofinanceira.exceptions.EmailJaExistenteException;
 import WalletFlow.sistemagestaofinanceira.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,14 +39,15 @@ public class UserController {
 
         try {
             usuarioService.register(DTO);
-        } catch (DataIntegrityViolationException e) {
-            result.rejectValue("email", "error.usuario", "E-mail já cadastrado");
+            return "redirect:/dashboard";
+
+        } catch (EmailJaExistenteException e) {
+            result.rejectValue("email", "error.usuario", e.getMessage());
             return "user/register";
+
         } catch (Exception e) {
             result.rejectValue(null,"error.usuario", "Um erro inesperado ocorreu, tente novamente!" );
             return "user/register";
         }
-
-        return "redirect:/dashboard";
     }
 }
