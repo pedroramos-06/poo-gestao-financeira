@@ -1,26 +1,16 @@
 package WalletFlow.sistemagestaofinanceira.repository;
 
+import WalletFlow.sistemagestaofinanceira.enums.Categoria;
+import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
-    List<Transacao> findByUsuarioId(Long usuarioId);
-
-    @Query("""
-        SELECT COALESCE(SUM(t.valor), 0)
-        FROM Transacao t
-        WHERE t.usuario.id = :usuarioId
-          AND t.tipo = :tipo
-          AND t.data BETWEEN :inicio AND :fim
-    """)
-    double somarPorTipo(
-            @Param("usuarioId") Long usuarioId,
-            @Param("tipo") TipoTransacao tipo,
-            @Param("inicio") LocalDate inicio,
-            @Param("fim") LocalDate fim
-    );
     @Query("""
         SELECT t FROM Transacao t WHERE t.usuario.id = :usuarioId
         AND (:dataInicio IS NULL OR t.data >= :dataInicio)
