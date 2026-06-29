@@ -1,17 +1,12 @@
 package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.NovaMetaDTO;
-import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
 import WalletFlow.sistemagestaofinanceira.exceptions.MetaDuplicadaException;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
-import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
-import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
 import WalletFlow.sistemagestaofinanceira.service.MetaService;
 import jakarta.validation.Valid;
-import org.springframework.boot.Banner;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

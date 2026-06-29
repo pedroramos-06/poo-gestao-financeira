@@ -1,17 +1,11 @@
 package WalletFlow.sistemagestaofinanceira.service;
 
-import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaMetaDTO;
-import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
-import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
 import WalletFlow.sistemagestaofinanceira.exceptions.MetaDuplicadaException;
-import WalletFlow.sistemagestaofinanceira.exceptions.SaldoInsuficienteException;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
-import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
-import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
