@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.YearMonth;
+import java.util.List;
 
 @Setter
 @Getter
@@ -28,4 +29,7 @@ public class DashboardDTO {
 
     @NotBlank
     private double metaAtingida;
+
+    @NotBlank
+    private List<ResumoCategoriaDTO> resumoGastosPorCategoria;
 }

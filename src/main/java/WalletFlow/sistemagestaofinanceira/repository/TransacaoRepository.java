@@ -31,11 +31,13 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
         SELECT COALESCE(SUM(t.valor), 0)
         FROM Transacao t
         WHERE t.usuario.id = :usuarioId
-          AND t.tipo = :tipo
-          AND t.data BETWEEN :inicio AND :fim
+        AND (:categoria IS NULL OR t.categoria = :categoria)
+        AND (:tipo IS NULL OR t.tipo = :tipo)
+        AND t.data BETWEEN :inicio AND :fim
     """)
     double somarPorTipo(
             @Param("usuarioId") Long usuarioId,
+            @Param("categoria") Categoria categoria,
             @Param("tipo") TipoTransacao tipo,
             @Param("inicio") LocalDate inicio,
             @Param("fim") LocalDate fim

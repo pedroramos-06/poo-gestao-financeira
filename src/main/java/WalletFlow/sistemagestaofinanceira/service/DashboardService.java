@@ -1,6 +1,8 @@
 package WalletFlow.sistemagestaofinanceira.service;
 
 import WalletFlow.sistemagestaofinanceira.dto.DashboardDTO;
+import WalletFlow.sistemagestaofinanceira.dto.ResumoCategoriaDTO;
+import WalletFlow.sistemagestaofinanceira.enums.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
@@ -8,6 +10,8 @@ import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class DashboardService {
@@ -26,6 +30,7 @@ public class DashboardService {
         double meta = getMeta(usuarioId, periodo);
         double metaAtingida = calcularMetaAtingida(saidas, meta);
         double saldo = transacaoRepository.getSaldo(usuarioId);
+        List<ResumoCategoriaDTO> resumoGastosPorCategoria = getResumoGastosPorCategoria(usuarioId, periodo);
 
         return new DashboardDTO(
                 periodo,
@@ -33,13 +38,43 @@ public class DashboardService {
                 entradas,
                 saidas,
                 meta,
-                metaAtingida
+                metaAtingida,
+                resumoGastosPorCategoria
         );
+    }
+
+    public List<ResumoCategoriaDTO> getResumoGastosPorCategoria(Long usuarioId, YearMonth periodo){
+        List<ResumoCategoriaDTO> resultado = new ArrayList<>();
+        double totalSaidas = getSaidas(usuarioId, periodo);
+
+        for (Categoria categoria : Categoria.values()) {
+            double valorCategoria = transacaoRepository.somarPorTipo(
+                    usuarioId,
+                    categoria,
+                    TipoTransacao.SAIDA,
+                    periodo.atDay(1),
+                    periodo.atEndOfMonth()
+            );
+
+            double percentual = 0.0;
+
+            if (totalSaidas > 0 && valorCategoria > 0) {
+                percentual = (valorCategoria / totalSaidas) * 100;
+            }
+
+            resultado.add(new ResumoCategoriaDTO(
+                    categoria.getDescricao(),
+                    valorCategoria,
+                    percentual
+            ));
+        }
+        return resultado;
     }
 
     private double getEntradas(Long usuarioId, YearMonth periodo) {
         return transacaoRepository.somarPorTipo(
                 usuarioId,
+                null,
                 TipoTransacao.ENTRADA,
                 periodo.atDay(1),
                 periodo.atEndOfMonth()
@@ -49,6 +84,7 @@ public class DashboardService {
     private double getSaidas(Long usuarioId, YearMonth periodo) {
         return transacaoRepository.somarPorTipo(
                 usuarioId,
+                null,
                 TipoTransacao.SAIDA,
                 periodo.atDay(1),
                 periodo.atEndOfMonth()
