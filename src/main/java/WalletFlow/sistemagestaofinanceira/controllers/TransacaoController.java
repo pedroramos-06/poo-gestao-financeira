@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -42,83 +43,96 @@ public class TransacaoController {
     @GetMapping("/criar")
     public String criar(Model model) {
         model.addAttribute("transacao", new NovaTransacaoDTO());
-
         return "transacoes/criar";
     }
 
     @PostMapping
-    public String inserir(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request, BindingResult result, Model model, @AuthenticationPrincipal Usuario usuario) {
+    public String inserir(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request,
+                          BindingResult result, Model model,
+                          @AuthenticationPrincipal Usuario usuario,
+                          RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
             return "transacoes/criar";
         }
         try{
             transacaoService.salvar(request, usuario);
+            redirectAttributes.addFlashAttribute("sucesso", "Transação criada com sucesso!");
             return "redirect:/transacoes";
 
         } catch(SaldoInsuficienteException e){
-            model.addAttribute("erro", e.getMessage());
-            model.addAttribute("transacao", request);
+            result.rejectValue("valor", "error.transacao", "Saldo insuficiente para essa transação");
             return "transacoes/criar";
 
         } catch (Exception e) {
-            model.addAttribute("erro", "Erro inesperado, tente novamente");
+            result.reject("error.transacao", "Um erro inesperado ocorreu, tente novamente!");
             return "transacoes/criar";
         }
     }
 
     @GetMapping("/{id}/excluir")
-    public String excluir(@PathVariable Long id, @AuthenticationPrincipal Usuario usuario, Model model) {
+    public String excluir(@PathVariable Long id,
+                          @AuthenticationPrincipal Usuario usuario,
+                          RedirectAttributes redirectAttributes) {
         try {
             transacaoService.excluir(id, usuario.getId());
+            redirectAttributes.addFlashAttribute("sucesso", "Transação excluída com sucesso!");
             return "redirect:/transacoes";
 
         } catch (AcessoNegadoException e) {
-            model.addAttribute("erro", "Você não tem permissão para deletar esta transação");
+            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
             return "redirect:/transacoes";
 
         } catch (Exception e) {
-            model.addAttribute("erro", "Erro ao deletar transação");
+            redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
             return "redirect:/transacoes";
         }
     }
 
     @GetMapping("/{id}/editar")
-    public String editar(@PathVariable Long id, Model model, @AuthenticationPrincipal Usuario usuario) {
+    public String editar(@PathVariable Long id,
+                         Model model,
+                         @AuthenticationPrincipal Usuario usuario,
+                         RedirectAttributes redirectAttributes) {
         try {
             Transacao t = transacaoService.buscarPorId(id, usuario.getId());
             model.addAttribute("transacao", new NovaTransacaoDTO(t));
-
             return "transacoes/criar";
+
         } catch (AcessoNegadoException e) {
-            model.addAttribute("erro", "Você não tem permissão para editar esta transação");
+            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
             return "redirect:/transacoes";
 
         } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
             return "redirect:/transacoes";
         }
     }
 
     @PutMapping
-    public String atualizar(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request, BindingResult result, Model model, @AuthenticationPrincipal Usuario usuario) {
+    public String atualizar(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request,
+                            BindingResult result,
+                            Model model,
+                            @AuthenticationPrincipal Usuario usuario,
+                            RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
             return "transacoes/criar";
         }
 
         try {
             transacaoService.editar(request, usuario);
+            redirectAttributes.addFlashAttribute("sucesso", "Transação atualizada com sucesso!");
             return "redirect:/transacoes";
 
         } catch (AcessoNegadoException e) {
-            model.addAttribute("erro", "Você não tem permissão para editar esta transação");
+            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
             return "redirect:/transacoes";
 
         } catch (SaldoInsuficienteException e) {
-            model.addAttribute("erro", e.getMessage());
-            model.addAttribute("transacao", request);
+            result.rejectValue("valor", "error.transacao", "Saldo insuficiente para essa transação");
             return "transacoes/criar";
 
         } catch (Exception e) {
-            model.addAttribute("erro", "Erro ao editar transação");
+            redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
             return "redirect:/transacoes";
         }
     }
