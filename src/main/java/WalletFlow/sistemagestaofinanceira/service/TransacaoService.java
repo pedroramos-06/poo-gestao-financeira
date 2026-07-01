@@ -51,7 +51,7 @@ public class TransacaoService {
 
     @Transactional
     public void excluir(Long id, Long usuarioId) throws AcessoNegadoException{
-        Transacao transacao = buscarPorId(id, usuarioId);
+        buscarPorId(id, usuarioId); //validar permissão
 
         transacaoRepository.deleteById(id);
     }

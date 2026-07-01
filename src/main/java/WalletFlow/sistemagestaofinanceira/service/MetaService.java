@@ -49,7 +49,7 @@ public class MetaService {
 
     @Transactional
     public void excluir(Long id, Long usuarioId) throws AcessoNegadoException {
-        buscarPorId(id, usuarioId);
+        buscarPorId(id, usuarioId); //validar permissão
 
         metaRepository.deleteById(id);
     }
