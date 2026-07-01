@@ -6,6 +6,7 @@ import WalletFlow.sistemagestaofinanceira.exceptions.MetaDuplicadaException;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,7 @@ public class MetaService {
 
     @Transactional(readOnly = true)
     public Meta buscarPorId(Long id, Long usuarioId) throws AcessoNegadoException {
-        Meta meta = metaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Meta não encontrada"));
+        Meta meta = metaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Meta não encontrada"));
 
         if(!meta.getUsuario().getId().equals(usuarioId)){
             throw  new AcessoNegadoException();
