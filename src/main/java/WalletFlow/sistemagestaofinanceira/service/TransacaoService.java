@@ -27,9 +27,9 @@ public class TransacaoService {
     }
 
     @Transactional(readOnly = true)
-    public List<Transacao> listar(Usuario usuario, FiltrosTransacaoDTO filtros) {
+    public List<Transacao> listar(Long usuarioId, FiltrosTransacaoDTO filtros) {
         return transacaoRepository.listar(
-            usuario.getId(),
+            usuarioId,
             filtros.getDataInicio(),
             filtros.getDataFim(),
             filtros.getCategoria(),
@@ -57,8 +57,8 @@ public class TransacaoService {
     }
 
     @Transactional
-    public void editar(NovaTransacaoDTO dto, Usuario usuario) throws AcessoNegadoException {
-        Transacao transacao = buscarPorId(dto.getId(), usuario.getId());
+    public void editar(NovaTransacaoDTO dto, Long usuarioId) throws AcessoNegadoException {
+        Transacao transacao = buscarPorId(dto.getId(), usuarioId);
 
         transacao.setCategoria(dto.getCategoria());
         transacao.setTipo(dto.getTipo());

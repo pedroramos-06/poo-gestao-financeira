@@ -29,9 +29,8 @@ public class TransacaoController {
     @GetMapping
     public String listar(@AuthenticationPrincipal Usuario usuario, @ModelAttribute("filtros") FiltrosTransacaoDTO filtros, Model model) {
         try {
-            List<Transacao> transacoes = transacaoService.listar(usuario, filtros);
+            List<Transacao> transacoes = transacaoService.listar(usuario.getId(), filtros);
             model.addAttribute("transacoes", transacoes);
-            model.addAttribute("filtros", filtros);
             return "transacoes/listar";
 
         } catch (Exception e) {
@@ -123,7 +122,7 @@ public class TransacaoController {
         }
 
         try {
-            transacaoService.editar(request, usuario);
+            transacaoService.editar(request, usuario.getId());
             redirectAttributes.addFlashAttribute("sucesso", "Transação atualizada com sucesso!");
             return "redirect:/transacoes";
 

@@ -29,7 +29,7 @@ public class MetaController {
     @GetMapping
     public String listar(@AuthenticationPrincipal Usuario usuario, Model model) {
         try {
-            List<Meta> metas = metaService.listarPorUsuario(usuario);
+            List<Meta> metas = metaService.listarPorUsuario(usuario.getId());
             model.addAttribute("metas", metas);
             return "meta/listar";
         } catch (Exception e) {
@@ -117,7 +117,7 @@ public class MetaController {
         }
 
         try {
-            metaService.editar(request, usuario);
+            metaService.editar(request, usuario.getId());
             redirectAttributes.addFlashAttribute("sucesso", "Meta atualizada com sucesso!");
             return "redirect:/metas";
 

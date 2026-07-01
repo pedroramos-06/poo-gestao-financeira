@@ -43,8 +43,8 @@ public class MetaService {
     }
 
     @Transactional(readOnly = true)
-    public List<Meta> listarPorUsuario(Usuario usuario) {
-        return metaRepository.findByUsuarioId(usuario.getId());
+    public List<Meta> listarPorUsuario(Long usuarioId) {
+        return metaRepository.findByUsuarioId(usuarioId);
     }
 
     @Transactional
@@ -55,8 +55,8 @@ public class MetaService {
     }
 
     @Transactional
-    public void editar(NovaMetaDTO dto, Usuario usuario) throws AcessoNegadoException{
-        Meta meta = buscarPorId(dto.getId(), usuario.getId());
+    public void editar(NovaMetaDTO dto, Long usuarioId) throws AcessoNegadoException{
+        Meta meta = buscarPorId(dto.getId(), usuarioId);
 
         meta.setData(dto.getData());
         meta.setValor(dto.getValor());
