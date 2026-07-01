@@ -65,7 +65,8 @@ public class DashboardService {
             resultado.add(new ResumoCategoriaDTO(
                     categoria.getDescricao(),
                     valorCategoria,
-                    percentual
+                    percentual,
+                    categoria.getCorHex()
             ));
         }
         return resultado;

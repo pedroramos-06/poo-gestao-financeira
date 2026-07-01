@@ -153,8 +153,8 @@
                                         </td>
                                         <td>
                                             <div class="progress" style="height: 10px; background-color: #e9ecef; border-radius: 5px;">
-                                                <div th:classappend="'progress-bar ' + ${#strings.listSplit('bg-primary,bg-success,bg-info,bg-warning,bg-danger', ',')[status.index % 5]}"
-                                                     th:style="'width: ' + ${gasto.percentual} + '%; border-radius: 5px;'">
+                                                <div class="progress-bar"
+                                                     th:style="'width: ' + ${gasto.percentual} + '%; background-color:' + ${gasto.getCor()} + '; border-radius: 5px;'">
                                                 </div>
                                             </div>
                                         </td>

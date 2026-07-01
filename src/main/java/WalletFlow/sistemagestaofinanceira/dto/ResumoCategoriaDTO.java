@@ -17,4 +17,7 @@ public class ResumoCategoriaDTO {
 
     @NotBlank
     private double percentual;
+
+    @NotBlank
+    private String cor;
 }
