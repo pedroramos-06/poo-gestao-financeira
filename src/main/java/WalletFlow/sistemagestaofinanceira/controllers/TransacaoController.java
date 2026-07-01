@@ -105,7 +105,7 @@ public class TransacaoController {
             redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
             return "redirect:/transacoes";
 
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
             return "redirect:/transacoes";
         }
