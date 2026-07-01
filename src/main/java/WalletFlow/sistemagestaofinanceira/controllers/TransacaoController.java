@@ -3,10 +3,10 @@ package WalletFlow.sistemagestaofinanceira.controllers;
 import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
-import WalletFlow.sistemagestaofinanceira.exceptions.SaldoInsuficienteException;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.service.TransacaoService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -59,10 +59,6 @@ public class TransacaoController {
             redirectAttributes.addFlashAttribute("sucesso", "Transação criada com sucesso!");
             return "redirect:/transacoes";
 
-        } catch(SaldoInsuficienteException e){
-            result.rejectValue("valor", "error.transacao", "Saldo insuficiente para essa transação");
-            return "transacoes/criar";
-
         } catch (Exception e) {
             result.reject("error.transacao", "Um erro inesperado ocorreu, tente novamente!");
             return "transacoes/criar";
@@ -78,7 +74,11 @@ public class TransacaoController {
             redirectAttributes.addFlashAttribute("sucesso", "Transação excluída com sucesso!");
             return "redirect:/transacoes";
 
-        } catch (AcessoNegadoException e) {
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("erro", "Transação não encontrada");
+            return "redirect:/transacoes";
+
+        }catch (AcessoNegadoException e) {
             redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
             return "redirect:/transacoes";
 
@@ -98,7 +98,11 @@ public class TransacaoController {
             model.addAttribute("transacao", new NovaTransacaoDTO(t));
             return "transacoes/criar";
 
-        } catch (AcessoNegadoException e) {
+        }catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("erro", "Transação não encontrada");
+            return "redirect:/transacoes";
+
+        }catch (AcessoNegadoException e) {
             redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
             return "redirect:/transacoes";
 
@@ -123,13 +127,13 @@ public class TransacaoController {
             redirectAttributes.addFlashAttribute("sucesso", "Transação atualizada com sucesso!");
             return "redirect:/transacoes";
 
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("erro", "Transação não encontrada");
+            return "redirect:/transacoes";
+
         } catch (AcessoNegadoException e) {
             redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
             return "redirect:/transacoes";
-
-        } catch (SaldoInsuficienteException e) {
-            result.rejectValue("valor", "error.transacao", "Saldo insuficiente para essa transação");
-            return "transacoes/criar";
 
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
