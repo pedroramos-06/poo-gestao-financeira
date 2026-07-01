@@ -1,78 +1,128 @@
-<html>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WalletFlow - Listar Transações</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
-<body>
-<div class="container">
-    <form th:action="@{/logout}" method="post">
-        <button type="submit" class="btn btn-danger">Sair</button>
-    </form>
-
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Descrição</th>
-                <th>Categoria</th>
-                <th>Tipo</th>
-                <th>Valor</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="transacao : ${transacoes}">
-                <td th:text="${transacao.data}"></td>
-                <td th:text="${transacao.descricao}"></td>
-                <td th:text="${transacao.categoria.descricao}"></td>
-                <td th:text="${transacao.tipo.descricao}"></td>
-                <td th:text="${transacao.valor}"></td>
-                <td>
-                    <a th:href="@{/transacoes/{id}/editar(id=${transacao.id})}" class="btn btn-secondary">Editar</a>
-                    <a th:href="@{/transacoes/{id}/excluir(id=${transacao.id})}" class="btn btn-danger">Excluir</a>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-    <a href="/transacoes/criar" class="btn btn-primary">Nova Transação</a>
-    <form method="get" th:action="@{/transacoes}" th:object="${filtros}">
-        <div class="mb-3">
-            <label class="form-label">
-                Data Início:
-                <input class="form-control" type="date" th:field="*{dataInicio}">
-            </label>
-
-            <label class="form-label">
-                Data Fim:
-                <input class="form-control" type="date" th:field="*{dataFim}">
-            </label>
-
-            <label class="form-label">
-                Categoria:
-                <select class="form-select" th:field="*{categoria}">
-                    <option value="" selected>Todas</option>
-                    <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
-                            th:value="${cat}"
-                            th:text="${cat.descricao}">
-                    </option>
-                </select>
-            </label>
-
-            <label class="form-label">
-                Tipo:
-                <select class="form-select" th:field="*{tipo}">
-                    <option value="" selected>Todos</option>
-                    <option th:each="tipo : ${T(WalletFlow.sistemagestaofinanceira.enums.TipoTransacao).values()}"
-                            th:value="${tipo}"
-                            th:text="${tipo.descricao}">
-                    </option>
-                </select>
-            </label>
-
-            <a href="/transacoes" class="btn btn-secondary">Limpar</a>
-            <button class="btn btn-primary" type="submit">Filtrar</button>
+<body class="d-flex flex-column min-vh-100 bg-light">
+    <nav class="navbar navbar-expand px-5 bg-dark" data-bs-theme="dark">
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold" href="/dashboard">WalletFlow</a>
+            <ul class="navbar-nav gap-4">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/metas">Metas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/transacoes">Transações</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-outline-danger">Sair</button>
+                    </form>
+                </li>
+            </ul>
         </div>
-    </form>
-</div>
+    </nav>
+    <main class="container py-4 d-flex flex-column gap-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-1">Transações</h2>
+                <p class="text-muted mb-0">Liste, filtre edite ou exclua suas transações</p>
+            </div>
+
+            <a href="/transacoes/criar" class="btn btn-success">+ Nova Transação</a>
+        </div>
+
+        <div class="card">
+            <form class="card-body row" method="get" th:action="@{/transacoes}" th:object="${filtros}">
+                <div class="col-2">
+                    <label class="form-label" for="dataInicio">Data Início</label>
+                    <input class="form-control" type="date" id="dataInicio" th:field="*{dataInicio}">
+                </div>
+
+                <div class="col-2">
+                    <label class="form-label" for="dataFim">Data Fim</label>
+                    <input class="form-control" type="date" id="dataFim" th:field="*{dataFim}">
+                </div>
+
+                <div class="col-2">
+                    <label class="form-label" for="categoria">Categoria</label>
+                    <select class="form-select" id="categoria" th:field="*{categoria}">
+                        <option value="" selected>Todas</option>
+                        <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
+                                th:value="${cat}"
+                                th:text="${cat.descricao}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-3">
+                    <label class="form-label">Tipo de transação</label>
+                    <div class="d-flex btn-group">
+                        <input class="btn-check" id="entrada" type="radio" th:field="*{tipo}" th:value="ENTRADA" autocomplete="off">
+                        <label class="btn btn-outline-success w-100" for="entrada">Entrada</label>
+
+                        <input class="btn-check" id="saida" type="radio" th:field="*{tipo}" th:value="SAIDA" autocomplete="off">
+                        <label class="btn btn-outline-danger w-100" for="saida">Saída</label>
+                    </div>
+                </div>
+
+                <div class="col d-flex gap-2 justify-content-end align-items-end">
+                    <a href="/transacoes" class="btn btn-light">Limpar</a>
+                    <button type="submit" class="btn btn-success">Filtrar</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card overflow-hidden">
+            <table class="table table-hover mb-0 text-center align-middle">
+                <thead class="table-dark ">
+                <tr>
+                    <th scope="col">Data</th>
+                    <th scope="col" class="text-start">Descrição</th>
+                    <th scope="col">Categoria</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Valor</th>
+                    <th scope="col">Ações</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="t : ${transacoes}">
+                    <td th:text="${#temporals.format(t.data, 'dd/MM/yyyy')}"></td>
+                    <td class="text-start" th:text="${t.descricao}"></td>
+                    <td>
+                        <span class="badge"
+                              th:style="|color: ${t.categoria.corHex}; background-color: color-mix(${t.categoria.corHex} 20%, white);|"
+                              th:text="${t.categoria.descricao}">
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${t.tipo.descricao == 'Entrada' ? 'text-bg-success' : 'text-bg-danger'}"
+                              th:text="${t.tipo.descricao}">
+                        </span>
+                    </td>
+                    <td class="fw-bold"
+                        th:classappend="${t.tipo.descricao == 'Entrada' ? 'text-success' : 'text-danger'}"
+                        th:text="${#numbers.formatCurrency(t.valor)}">
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <a class="btn btn-sm btn-outline-primary" th:href="@{/transacoes/{id}/editar(id=${t.id})}">Editar</a>
+                            <button class="btn btn-sm btn-outline-danger" th:href="@{/transacoes/{id}/excluir(id=${t.id})}">Excluir</button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
