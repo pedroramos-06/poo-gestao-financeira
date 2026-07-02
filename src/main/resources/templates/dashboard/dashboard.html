@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WalletFlow</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+        .card { border: none; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar bg-dark border-bottom" data-bs-theme="dark" style="padding-inline: 50px 50px">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/dashboard">
+                <strong>WalletFlow</strong>
+            </a>
+
+            <ul class="navbar-nav d-flex flex-row ms-auto gap-4">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/transacoes">Transações</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/metas">Metas</a>
+                </li>
+                <li class="nav-item">
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-danger">Sair</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mb-4 align-items-center g-3 mt-5">
+            <div class="col-12 col-md-4 order-md-2 text-md-end">
+                <h3 class="fw-bold mb-0 text-capitalize" th:text="${#temporals.format(dashboard.getPeriodo(), 'MMMM ''de'' yyyy')}">Junho de 2026</h3>
+            </div>
+            <div class="col-12 col-md-3 order-md-1">
+                <form method="GET" action="/dashboard" id="formPeriodo">
+                    <label for="periodo" class="form-label small text-muted fw-bold mb-1">Filtrar por Período</label>
+                    <input type="month"
+                           id="periodo"
+                           name="periodo"
+                           class="form-control form-control-sm"
+                           th:value="${periodoAtual}"
+                           onchange="document.getElementById('formPeriodo').submit()">
+                </form>
+            </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-start border-success border-4">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-1 text-success fw-bold text-uppercase small">Entradas</h6>
+                        <h3 class="card-title fw-bold text-dark mb-0"
+                            th:text="'R$ ' + ${#numbers.formatDecimal(dashboard.getTotalEntradas(), 1, 'POINT', 2, 'COMMA')}">R$ 0,00</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-start border-danger border-4">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-1 text-danger fw-bold text-uppercase small">Saídas</h6>
+                        <h3 class="card-title fw-bold text-dark mb-0"
+                            th:text="'R$ ' + ${#numbers.formatDecimal(dashboard.getTotalSaidas(), 1, 'POINT', 2, 'COMMA')}">R$ 0,00</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="card h-100 border-start border-primary border-4">
+                    <div class="card-body">
+                        <h6 class="card-subtitle mb-1 text-primary fw-bold text-uppercase small">Saldo Atual</h6>
+                        <h3 class="card-title fw-bold text-dark mb-0"
+                            th:text="'R$ ' + ${#numbers.formatDecimal(dashboard.getSaldo(), 1, 'POINT', 2, 'COMMA')}">R$ 0,00</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5 align-items-start">
+
+            <div class="col-12 col-lg-6">
+                <div class="card">
+                    <div class="card-body p-4 d-flex flex-column justify-content-between">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title mb-1 fw-bold text-dark">Meta de Gastos do Mês</h5>
+                                    <p class="card-text text-muted small mb-0">Seu limite de despesas estipulado</p>
+                                </div>
+                                <div class="text-end">
+                                    <span class="text-muted small d-block">Limite Total</span>
+                                    <h4 class="fw-bold text-dark mb-0" th:text="${dashboard.getMeta()}">R$ 4.000,00</h4>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-end mb-2 mt-4">
+                                <div>
+                                    <span class="text-muted small">Total já gasto:</span>
+                                    <span class="fw-bold text-danger d-block fs-5" th:text="'R$ '+${dashboard.getTotalSaidas()}">R$ 2.400,00</span>
+                                </div>
+                                <div class="text-end">
+                                    <span class="fs-3 fw-bold"
+                                          th:classappend="${dashboard.getMetaAtingida() >= 100} ? 'text-danger' : (${dashboard.getMetaAtingida() >= 80} ? 'text-warning' : 'text-success')"
+                                          th:text="${dashboard.getMetaAtingida() + '%'}">
+                                        60%
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="progress mb-2" role="progressbar" aria-label="Limite de gastos" aria-valuemin="0" aria-valuemax="100" style="height: 14px;">
+                                <div th:classappend="'progress-bar progress-bar-striped progress-bar-animated ' + (${dashboard.getMetaAtingida() >= 100} ? 'bg-danger' : (${dashboard.getMetaAtingida() >= 80} ? 'bg-warning' : 'bg-success'))"
+                                     th:style="'width: ' + (${dashboard.getMetaAtingida() > 100} ? '100' : ${dashboard.getMetaAtingida()}) + '%'"
+                                     style="width: 60%;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3 text-center small" th:if="${dashboard.getMetaAtingida() >= 100}">
+                            <div class="alert alert-danger py-2 mb-0 fw-bold">
+                                ⚠️ Atenção: Você ultrapassou o seu limite de gastos!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+                <div class="card h-100">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold text-dark mb-1">Gastos por Categoria</h5>
+                        <p class="card-text text-muted small mb-4">Distribuição do seu dinheiro neste período</p>
+
+                        <div th:if="${#lists.isEmpty(dashboard.resumoGastosPorCategoria)}" class="alert alert-info mb-0 py-2 small text-center">
+                            Nenhum gasto registrado neste período.
+                        </div>
+
+                        <div th:unless="${#lists.isEmpty(dashboard.resumoGastosPorCategoria)}">
+                            <div class="table-responsive">
+                                <table class="table table-borderless align-middle mb-0">
+                                    <tr th:each="gasto, status : ${dashboard.resumoGastosPorCategoria}">
+                                        <td style="width: 110px;" class="ps-0">
+                                            <span class="fw-semibold text-secondary small" th:text="${gasto.categoria}">Categoria</span>
+                                        </td>
+                                        <td>
+                                            <div class="progress" style="height: 10px; background-color: #e9ecef; border-radius: 5px;">
+                                                <div class="progress-bar"
+                                                     th:style="'width: ' + ${gasto.percentual} + '%; background-color:' + ${gasto.getCor()} + '; border-radius: 5px;'">
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td style="width: 110px;" class="text-end text-nowrap">
+                                            <strong class="text-dark small" th:text="'R$ ' + ${#numbers.formatDecimal(gasto.valor, 0, 'COMMA', 2, 'POINT')}">R$ 0,00</strong>
+                                        </td>
+                                        <td style="width: 50px;" class="text-end pe-0">
+                                            <span class="text-muted small fw-bold" th:text="${#numbers.formatDecimal(gasto.percentual, 0, 'COMMA', 0, 'POINT')} + '%'">0%</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
