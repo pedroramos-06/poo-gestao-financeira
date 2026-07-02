@@ -74,7 +74,7 @@
                 <select class="form-select" id="categoria" name="categoria" disabled
                         oninput="this.classList.remove('is-invalid')"
                         th:classappend="${#fields.hasErrors('categoria') ? 'is-invalid' : ''}">
-                    <option value="" disabled hidden th:selected="*{categoria == null}">Primeiro escolha um tipo</option>
+                    <option value="" disabled hidden th:selected="*{categoria == null}">Escolha uma categoria</option>
                     <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
                             th:value="${cat}"
                             th:text="${cat.descricao}"
