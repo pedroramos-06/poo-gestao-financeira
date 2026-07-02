@@ -33,7 +33,7 @@ public class SecurityConfig {
                 http.formLogin(form -> form
                     .loginPage("/user/login")
                     .loginProcessingUrl("/user/login")
-                    .defaultSuccessUrl("/transacoes", true) //ou outro endpoint
+                    .defaultSuccessUrl("/dashboard", true) //ou outro endpoint
                     .failureUrl("/user/login?error")
                     .usernameParameter("email")
                     .passwordParameter("senha")

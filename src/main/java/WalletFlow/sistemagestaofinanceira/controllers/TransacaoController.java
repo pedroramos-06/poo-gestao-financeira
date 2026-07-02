@@ -2,15 +2,18 @@ package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
+import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.service.TransacaoService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -25,55 +28,115 @@ public class TransacaoController {
 
     @GetMapping
     public String listar(@AuthenticationPrincipal Usuario usuario, @ModelAttribute("filtros") FiltrosTransacaoDTO filtros, Model model) {
-        List<Transacao> transacoes = transacaoService.listar(usuario, filtros);
-        model.addAttribute("transacoes", transacoes);
+        try {
+            List<Transacao> transacoes = transacaoService.listar(usuario.getId(), filtros);
+            model.addAttribute("transacoes", transacoes);
+            return "transacoes/listar";
 
-        return "transacoes/listar";
+        } catch (Exception e) {
+            model.addAttribute("erro", "Erro ao listar transações");
+            return "transacoes/listar";
+        }
     }
 
     @GetMapping("/criar")
     public String criar(Model model) {
         model.addAttribute("transacao", new NovaTransacaoDTO());
-
         return "transacoes/criar";
     }
 
     @PostMapping
-    public String inserir(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request, BindingResult result, @AuthenticationPrincipal Usuario usuario) {
+    public String inserir(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request,
+                          BindingResult result, Model model,
+                          @AuthenticationPrincipal Usuario usuario,
+                          RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
             return "transacoes/criar";
         }
+        try{
+            transacaoService.salvar(request, usuario);
+            redirectAttributes.addFlashAttribute("sucesso", "Transação criada com sucesso!");
+            return "redirect:/transacoes";
 
-        transacaoService.salvar(request, usuario);
-        return "redirect:/transacoes";
+        } catch (Exception e) {
+            result.reject("error.transacao", "Um erro inesperado ocorreu, tente novamente!");
+            return "transacoes/criar";
+        }
     }
 
     @GetMapping("/{id}/excluir")
-    public String excluir(@PathVariable Long id) {
-        transacaoService.excluir(id);
+    public String excluir(@PathVariable Long id,
+                          @AuthenticationPrincipal Usuario usuario,
+                          RedirectAttributes redirectAttributes) {
+        try {
+            transacaoService.excluir(id, usuario.getId());
+            redirectAttributes.addFlashAttribute("sucesso", "Transação excluída com sucesso!");
+            return "redirect:/transacoes";
 
-        return "redirect:/transacoes";
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("erro", "Transação não encontrada");
+            return "redirect:/transacoes";
+
+        }catch (AcessoNegadoException e) {
+            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
+            return "redirect:/transacoes";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
+            return "redirect:/transacoes";
+        }
     }
 
     @GetMapping("/{id}/editar")
-    public String editar(@PathVariable Long id, Model model) {
+    public String editar(@PathVariable Long id,
+                         Model model,
+                         @AuthenticationPrincipal Usuario usuario,
+                         RedirectAttributes redirectAttributes) {
         try {
-            Transacao t = transacaoService.buscarPorId(id);
+            Transacao t = transacaoService.buscarPorId(id, usuario.getId());
             model.addAttribute("transacao", new NovaTransacaoDTO(t));
-
             return "transacoes/criar";
-        } catch (RuntimeException e) {
+
+        }catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("erro", "Transação não encontrada");
+            return "redirect:/transacoes";
+
+        }catch (AcessoNegadoException e) {
+            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
+            return "redirect:/transacoes";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
             return "redirect:/transacoes";
         }
     }
 
     @PutMapping
-    public String atualizar(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request, BindingResult result, @AuthenticationPrincipal Usuario usuario) {
+    public String atualizar(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request,
+                            BindingResult result,
+                            Model model,
+                            @AuthenticationPrincipal Usuario usuario,
+                            RedirectAttributes redirectAttributes) {
         if(result.hasErrors()) {
             return "transacoes/criar";
         }
 
-        transacaoService.editar(request, usuario);
-        return "redirect:/transacoes";
+        try {
+            transacaoService.editar(request, usuario.getId());
+            redirectAttributes.addFlashAttribute("sucesso", "Transação atualizada com sucesso!");
+            return "redirect:/transacoes";
+
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("erro", "Transação não encontrada");
+            return "redirect:/transacoes";
+
+        } catch (AcessoNegadoException e) {
+            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
+            return "redirect:/transacoes";
+
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
+            return "redirect:/transacoes";
+        }
     }
 }
