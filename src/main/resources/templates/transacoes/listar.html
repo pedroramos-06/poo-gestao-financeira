@@ -117,7 +117,7 @@
                     </td>
                     <td class="fw-bold"
                         th:classappend="${t.tipo.descricao == 'Entrada' ? 'text-success' : 'text-danger'}"
-                        th:text="${#numbers.formatCurrency(t.valor)}">
+                        th:text="|R$ ${#numbers.formatDecimal(t.valor, 1, 'POINT', 2, 'COMMA')}|">
                     </td>
                     <td>
                         <div class="btn-group">
