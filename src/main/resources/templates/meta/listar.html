@@ -57,8 +57,8 @@
             </thead>
             <tbody>
             <tr th:each="m : ${metas}">
-                <td th:text="${m.data}"></td>
-                <td th:text="|R$ ${#numbers.formatDecimal(m.valor, 1, 'POINT', 2, 'COMMA')}|"></td>
+                <td th:text="${#temporals.format(m.data, 'MMMM ''de'' yyyy')}"></td>
+                <td class="fw-bold" th:text="|R$ ${#numbers.formatDecimal(m.valor, 1, 'POINT', 2, 'COMMA')}|"></td>
                 <td>
                     <div class="btn-group">
                         <a class="btn btn-sm btn-outline-primary" th:href="@{/metas/{id}/editar(id=${m.id})}">Editar</a>
