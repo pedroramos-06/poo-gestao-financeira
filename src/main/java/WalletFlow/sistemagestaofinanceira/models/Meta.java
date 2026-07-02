@@ -10,6 +10,7 @@ import java.time.YearMonth;
 @Setter
 @NoArgsConstructor
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "data"}))
 public class Meta {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,9 +21,9 @@ public class Meta {
     private Usuario usuario;
 
     @Column(nullable = false)
-    private double valor;
+    private Double valor;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private YearMonth data;
 
     public Meta(double valor, YearMonth data) {

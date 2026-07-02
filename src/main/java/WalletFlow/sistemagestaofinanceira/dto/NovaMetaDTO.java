@@ -14,7 +14,7 @@ public class NovaMetaDTO {
     private Long id; //Caso seja edição
 
     @Positive(message = "O valor deve ser maior que zero")
-    private double valor;
+    private Double valor;
 
     @NotNull(message = "A data é obrigatória")
     private YearMonth data;
