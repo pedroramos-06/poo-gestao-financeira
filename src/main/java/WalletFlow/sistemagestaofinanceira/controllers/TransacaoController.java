@@ -102,7 +102,7 @@ public class TransacaoController {
             return "redirect:/transacoes";
 
         }catch (AcessoNegadoException e) {
-            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
+            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para editar esta transacao");
             return "redirect:/transacoes";
 
         } catch (Exception e) {
@@ -131,7 +131,7 @@ public class TransacaoController {
             return "redirect:/transacoes";
 
         } catch (AcessoNegadoException e) {
-            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta transacao");
+            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para editar esta transacao");
             return "redirect:/transacoes";
 
         } catch (Exception e) {

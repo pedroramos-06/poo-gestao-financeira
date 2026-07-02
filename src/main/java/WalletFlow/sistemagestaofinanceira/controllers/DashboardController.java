@@ -34,6 +34,7 @@ public class DashboardController {
         try{
             DashboardDTO dashboard = dashboardService.getResumo(usuario.getId(), periodo);
 
+            model.addAttribute("usuario", usuario.getNome());
             model.addAttribute("periodoSelecionado", periodo);
             model.addAttribute("dashboard", dashboard);
             return "dashboard/dashboard";
