@@ -22,7 +22,7 @@ public class Transacao {
     private Usuario usuario;
 
     private String descricao;
-    private double valor;
+    private Double valor;
 
     @Enumerated(EnumType.STRING)
     private TipoTransacao tipo;
@@ -32,7 +32,7 @@ public class Transacao {
 
     private LocalDate data;
 
-    public Transacao(String descricao, double valor, TipoTransacao tipo, Categoria categoria, LocalDate data) {
+    public Transacao(String descricao, Double valor, TipoTransacao tipo, Categoria categoria, LocalDate data) {
         this.descricao = descricao;
         this.valor = valor;
         this.tipo = tipo;
