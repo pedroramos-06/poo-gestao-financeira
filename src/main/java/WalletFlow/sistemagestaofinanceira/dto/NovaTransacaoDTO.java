@@ -21,8 +21,9 @@ public class NovaTransacaoDTO {
     @Size(max = 75, message = "A descrição deve ter no máximo 75 caracteres")
     private String descricao;
 
+    @NotNull(message = "O valor é obrigatório")
     @Positive(message = "O valor deve ser maior que zero")
-    private double valor;
+    private Double valor;
 
     @NotNull(message = "O tipo da transação é obrigatório")
     private TipoTransacao tipo;
