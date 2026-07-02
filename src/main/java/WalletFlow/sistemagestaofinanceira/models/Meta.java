@@ -20,7 +20,7 @@ public class Meta {
     private Usuario usuario;
 
     @Column(nullable = false)
-    private double valor;
+    private Double valor;
 
     @Column(nullable = false, unique = true)
     private YearMonth data;
