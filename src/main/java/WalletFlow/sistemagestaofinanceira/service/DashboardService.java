@@ -7,6 +7,7 @@ import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
+import WalletFlow.sistemagestaofinanceira.utils.MetaCorHelper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -41,6 +42,7 @@ public class DashboardService {
                 saidas,
                 meta,
                 metaAtingida,
+                MetaCorHelper.getCor(metaAtingida),
                 resumoGastosPorCategoria
         );
     }

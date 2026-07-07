@@ -18,11 +18,6 @@ public class DashboardDTO {
     private BigDecimal totalSaidas;
     private BigDecimal meta;
     private double metaAtingida;
+    private String metaCor;
     private List<ResumoCategoriaDTO> resumoGastosPorCategoria;
-
-    public String getMetaCor() {
-        if (metaAtingida >= 90) return "danger";
-        else if (metaAtingida >= 75) return "warning";
-        else return "success";
-    }
 }
