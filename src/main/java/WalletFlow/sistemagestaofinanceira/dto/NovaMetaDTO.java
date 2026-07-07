@@ -5,6 +5,8 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.YearMonth;
 
 @Setter
@@ -13,8 +15,10 @@ import java.time.YearMonth;
 public class NovaMetaDTO {
     private Long id; //Caso seja edição
 
+    @NotNull(message = "O valor é obrigatório")
     @Positive(message = "O valor deve ser maior que zero")
-    private Double valor;
+    @Digits(integer = 8, fraction = 2, message = "O valor deve ter no máximo 8 dígitos inteiros e 2 decimais")
+    private BigDecimal valor;
 
     @NotNull(message = "A data é obrigatória")
     private YearMonth data;

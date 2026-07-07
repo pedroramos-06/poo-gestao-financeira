@@ -9,6 +9,8 @@ import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +27,11 @@ public class DashboardService {
     }
 
     public DashboardDTO getResumo(Long usuarioId, YearMonth periodo) {
-        double entradas = getEntradas(usuarioId, periodo);
-        double saidas = getSaidas(usuarioId, periodo);
-        double meta = getMeta(usuarioId, periodo);
+        BigDecimal entradas = getEntradas(usuarioId, periodo);
+        BigDecimal saidas = getSaidas(usuarioId, periodo);
+        BigDecimal meta = getMeta(usuarioId, periodo);
         double metaAtingida = calcularMetaAtingida(saidas, meta);
-        double saldo = transacaoRepository.getSaldo(usuarioId);
+        BigDecimal saldo = transacaoRepository.getSaldo(usuarioId);
         List<ResumoCategoriaDTO> resumoGastosPorCategoria = getResumoGastosPorCategoria(usuarioId, periodo);
 
         return new DashboardDTO(
@@ -45,10 +47,10 @@ public class DashboardService {
 
     public List<ResumoCategoriaDTO> getResumoGastosPorCategoria(Long usuarioId, YearMonth periodo){
         List<ResumoCategoriaDTO> resultado = new ArrayList<>();
-        double totalSaidas = getSaidas(usuarioId, periodo);
+        BigDecimal totalSaidas = getSaidas(usuarioId, periodo);
 
         for (Categoria categoria : Categoria.values()) {
-            double valorCategoria = transacaoRepository.somarPorTipo(
+            BigDecimal valorCategoria = transacaoRepository.somarPorTipo(
                     usuarioId,
                     categoria,
                     TipoTransacao.SAIDA,
@@ -58,8 +60,11 @@ public class DashboardService {
 
             double percentual = 0.0;
 
-            if (totalSaidas > 0 && valorCategoria > 0) {
-                percentual = (valorCategoria / totalSaidas) * 100;
+            if (totalSaidas.compareTo(BigDecimal.ZERO) > 0 && valorCategoria.compareTo(BigDecimal.ZERO) > 0) {
+                percentual = valorCategoria
+                        .multiply(BigDecimal.valueOf(100))
+                        .divide(totalSaidas, 4, RoundingMode.HALF_UP)
+                        .doubleValue();
             }
 
             resultado.add(new ResumoCategoriaDTO(
@@ -72,7 +77,7 @@ public class DashboardService {
         return resultado;
     }
 
-    private double getEntradas(Long usuarioId, YearMonth periodo) {
+    private BigDecimal getEntradas(Long usuarioId, YearMonth periodo) {
         return transacaoRepository.somarPorTipo(
                 usuarioId,
                 null,
@@ -82,7 +87,7 @@ public class DashboardService {
         );
     }
 
-    private double getSaidas(Long usuarioId, YearMonth periodo) {
+    private BigDecimal getSaidas(Long usuarioId, YearMonth periodo) {
         return transacaoRepository.somarPorTipo(
                 usuarioId,
                 null,
@@ -92,16 +97,19 @@ public class DashboardService {
         );
     }
 
-    private double getMeta(Long usuarioId, YearMonth periodo) {
+    private BigDecimal getMeta(Long usuarioId, YearMonth periodo) {
         return metaRepository.findByUsuarioIdAndData(usuarioId, periodo)
                 .map(Meta::getValor)
-                .orElse(0.0);
+                .orElse(BigDecimal.ZERO);
     }
 
-    private double calcularMetaAtingida(double saidas, double meta) {
-        if (meta <= 0) {
+    private double calcularMetaAtingida(BigDecimal saidas, BigDecimal meta) {
+        if (meta.compareTo(BigDecimal.ZERO) <= 0) {
             return 0.0;
         }
-        return (saidas * 100) / meta;
+        return saidas
+                .multiply(BigDecimal.valueOf(100))
+                .divide(meta, 4, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 }

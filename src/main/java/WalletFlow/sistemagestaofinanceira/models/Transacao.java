@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Getter
@@ -22,7 +24,9 @@ public class Transacao {
     private Usuario usuario;
 
     private String descricao;
-    private Double valor;
+
+    @Column(precision = 10, scale = 2) //Valor máximo: 99.999.999,99
+    private BigDecimal valor;
 
     @Enumerated(EnumType.STRING)
     private TipoTransacao tipo;
@@ -32,7 +36,7 @@ public class Transacao {
 
     private LocalDate data;
 
-    public Transacao(String descricao, Double valor, TipoTransacao tipo, Categoria categoria, LocalDate data) {
+    public Transacao(String descricao, BigDecimal valor, TipoTransacao tipo, Categoria categoria, LocalDate data) {
         this.descricao = descricao;
         this.valor = valor;
         this.tipo = tipo;
