@@ -44,7 +44,7 @@ public class MetaService {
 
     @Transactional(readOnly = true)
     public List<Meta> listarPorUsuario(Long usuarioId) {
-        return metaRepository.findByUsuarioId(usuarioId);
+        return metaRepository.findByUsuarioIdOrderByDataDesc(usuarioId);
     }
 
     @Transactional

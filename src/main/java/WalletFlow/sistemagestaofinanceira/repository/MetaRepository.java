@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MetaRepository extends JpaRepository<Meta, Long> {
-    List<Meta> findByUsuarioId(Long usuarioId);
+    List<Meta> findByUsuarioIdOrderByDataDesc(Long usuarioId);
     Optional<Meta> findByUsuarioIdAndData(Long usuarioId, YearMonth data);
 }

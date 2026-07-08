@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Setter
@@ -23,7 +24,8 @@ public class NovaTransacaoDTO {
 
     @NotNull(message = "O valor é obrigatório")
     @Positive(message = "O valor deve ser maior que zero")
-    private Double valor;
+    @Digits(integer = 8, fraction = 2, message = "O valor deve ter no máximo 8 dígitos inteiros e 2 decimais")
+    private BigDecimal valor;
 
     @NotNull(message = "O tipo da transação é obrigatório")
     private TipoTransacao tipo;

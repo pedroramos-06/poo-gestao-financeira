@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 import java.time.YearMonth;
 
 @Getter
@@ -20,13 +22,13 @@ public class Meta {
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
-    @Column(nullable = false)
-    private Double valor;
+    @Column(nullable = false, precision = 10, scale = 2) //Valor máximo: 99.999.999,99
+    private BigDecimal valor;
 
     @Column(nullable = false)
     private YearMonth data;
 
-    public Meta(double valor, YearMonth data) {
+    public Meta(BigDecimal valor, YearMonth data) {
         this.valor = valor;
         this.data = data;
     }

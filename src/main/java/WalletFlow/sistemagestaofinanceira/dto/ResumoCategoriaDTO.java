@@ -1,23 +1,17 @@
 package WalletFlow.sistemagestaofinanceira.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Getter
 @Setter
 @AllArgsConstructor
 public class ResumoCategoriaDTO {
-    @NotBlank
     private String categoria;
-
-    @NotBlank
-    private double valor;
-
-    @NotBlank
+    private BigDecimal valor;
     private double percentual;
-
-    @NotBlank
     private String cor;
 }
