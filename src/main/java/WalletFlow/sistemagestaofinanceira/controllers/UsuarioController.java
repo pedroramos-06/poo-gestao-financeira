@@ -26,12 +26,12 @@ public class UsuarioController {
 
     @GetMapping("/register")
     public String formRegister(Model model) {
-        model.addAttribute("usuario", new NovoUsuarioDTO());
+        model.addAttribute("usuariodto", new NovoUsuarioDTO());
         return "user/register";
     }
 
     @PostMapping("/register")
-    public String register (@Valid @ModelAttribute("usuario")NovoUsuarioDTO DTO, BindingResult result, Model model) {
+    public String register (@Valid @ModelAttribute("usuariodto")NovoUsuarioDTO DTO, BindingResult result) {
         if(result.hasErrors()){
             return "user/register";
         }
