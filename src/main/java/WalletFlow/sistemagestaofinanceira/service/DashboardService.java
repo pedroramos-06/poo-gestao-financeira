@@ -7,6 +7,7 @@ import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
+import WalletFlow.sistemagestaofinanceira.repository.UsuarioRepository;
 import WalletFlow.sistemagestaofinanceira.utils.MetaCorHelper;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +22,12 @@ public class DashboardService {
 
     private final TransacaoRepository transacaoRepository;
     private final MetaRepository metaRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public DashboardService(TransacaoRepository transacaoRepository, MetaRepository metaRepository) {
+    public DashboardService(TransacaoRepository transacaoRepository, MetaRepository metaRepository, UsuarioRepository usuarioRepository) {
         this.transacaoRepository = transacaoRepository;
         this.metaRepository = metaRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public DashboardDTO getResumo(Long usuarioId, YearMonth periodo) {
@@ -102,7 +105,7 @@ public class DashboardService {
     private BigDecimal getMeta(Long usuarioId, YearMonth periodo) {
         return metaRepository.findByUsuarioIdAndData(usuarioId, periodo)
                 .map(Meta::getValor)
-                .orElse(BigDecimal.ZERO);
+                .orElseGet(() -> usuarioRepository.getMetaPadraoById(usuarioId));
     }
 
     private double calcularMetaAtingida(BigDecimal saidas, BigDecimal meta) {
