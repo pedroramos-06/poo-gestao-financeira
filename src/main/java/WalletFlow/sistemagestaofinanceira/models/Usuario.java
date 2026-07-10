@@ -1,11 +1,16 @@
 package WalletFlow.sistemagestaofinanceira.models;
 
+import WalletFlow.sistemagestaofinanceira.enums.Tema;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -26,6 +31,16 @@ public class Usuario implements UserDetails {
 
     @Column(nullable = false)
     private String senha;
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime dataCriacao;
+
+    @Enumerated(EnumType.STRING)
+    private Tema tema = Tema.CLARO;
+
+    @Column(nullable = false, precision = 10, scale = 2) //Valor máximo: 99.999.999,99
+    private BigDecimal metaPadrao = BigDecimal.ZERO;
 
     public Usuario(String nome, String email, String senha) {
         this.nome = nome;
