@@ -58,6 +58,12 @@ public class MetaService {
     public void editar(NovaMetaDTO dto, Long usuarioId){
         Meta meta = buscarPorId(dto.getId(), usuarioId);
 
+        if(!meta.getData().equals(dto.getData())){
+            if(metaRepository.findByUsuarioIdAndData(usuarioId, dto.getData()).isPresent()){
+                throw new MetaDuplicadaException();
+            }
+        }
+
         meta.setData(dto.getData());
         meta.setValor(dto.getValor());
 
