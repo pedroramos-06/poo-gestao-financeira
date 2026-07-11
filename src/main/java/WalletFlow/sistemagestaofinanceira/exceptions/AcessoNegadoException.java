@@ -1,6 +1,6 @@
 package WalletFlow.sistemagestaofinanceira.exceptions;
 
-public class AcessoNegadoException extends Exception {
+public class AcessoNegadoException extends RuntimeException {
     public  AcessoNegadoException(){
         super("O usuário não possui acesso a esse recurso");
     }
