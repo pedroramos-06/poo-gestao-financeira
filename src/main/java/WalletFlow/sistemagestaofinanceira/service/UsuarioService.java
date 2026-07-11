@@ -64,4 +64,8 @@ public class UsuarioService implements UserDetailsService {
         return repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
+
+    public boolean senhaValida(Usuario usuario, String senhaDigitada) {
+        return passwordEncoder.matches(senhaDigitada, usuario.getSenha());
+    }
 }

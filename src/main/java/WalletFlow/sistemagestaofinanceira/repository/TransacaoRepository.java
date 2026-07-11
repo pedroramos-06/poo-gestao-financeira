@@ -51,4 +51,6 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
         WHERE t.usuario.id = :usuarioId
     """)
     BigDecimal getSaldo( @Param("usuarioId") Long usuarioId );
+
+    void deleteByUsuarioId(Long usuarioId);
 }
