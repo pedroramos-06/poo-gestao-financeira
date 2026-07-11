@@ -2,11 +2,9 @@ package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
-import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.service.TransacaoService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -27,7 +25,9 @@ public class TransacaoController {
     }
 
     @GetMapping
-    public String listar(@AuthenticationPrincipal Usuario usuario, @ModelAttribute("filtros") FiltrosTransacaoDTO filtros, Model model) {
+    public String listar(@AuthenticationPrincipal Usuario usuario,
+                         @ModelAttribute("filtros") FiltrosTransacaoDTO filtros,
+                         Model model) {
         List<Transacao> transacoes = transacaoService.listar(usuario.getId(), filtros);
         model.addAttribute("transacoes", transacoes);
         return "transacoes/listar";
@@ -44,7 +44,7 @@ public class TransacaoController {
                           BindingResult result, Model model,
                           @AuthenticationPrincipal Usuario usuario,
                           RedirectAttributes redirectAttributes) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             return "transacoes/criar";
         }
 
@@ -66,8 +66,7 @@ public class TransacaoController {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id,
                          Model model,
-                         @AuthenticationPrincipal Usuario usuario,
-                         RedirectAttributes redirectAttributes) {
+                         @AuthenticationPrincipal Usuario usuario) {
 
         Transacao t = transacaoService.buscarPorId(id, usuario.getId());
         model.addAttribute("transacao", new NovaTransacaoDTO(t));
@@ -77,10 +76,9 @@ public class TransacaoController {
     @PutMapping
     public String atualizar(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request,
                             BindingResult result,
-                            Model model,
                             @AuthenticationPrincipal Usuario usuario,
                             RedirectAttributes redirectAttributes) {
-        if(result.hasErrors()) {
+        if (result.hasErrors()) {
             return "transacoes/criar";
         }
 

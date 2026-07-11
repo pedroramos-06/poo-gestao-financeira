@@ -41,10 +41,14 @@ public class GlobalExceptionHandler {
     }
 
     private String redirectBackTo(HttpServletRequest request) {
-        String referer = request.getHeader("Referer");
-        if (referer != null && !referer.isBlank()) {
-            return "redirect:" + referer;
+        String uri = request.getRequestURI();
+        if (uri.startsWith("/transacoes")) {
+            return "redirect:/transacoes";
         }
-        return "redirect:" + "/dashboard";
+        if (uri.startsWith("/metas")) {
+            return "redirect:/metas";
+        }
+        return "redirect:/dashboard";
     }
+
 }

@@ -1,7 +1,6 @@
 package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.NovaMetaDTO;
-import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
 import WalletFlow.sistemagestaofinanceira.exceptions.MetaDuplicadaException;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
@@ -28,14 +27,9 @@ public class MetaController {
 
     @GetMapping
     public String listar(@AuthenticationPrincipal Usuario usuario, Model model) {
-        try {
-            List<Meta> metas = metaService.listarPorUsuario(usuario.getId());
-            model.addAttribute("metas", metas);
-            return "meta/listar";
-        } catch (Exception e) {
-            model.addAttribute("erro", "Erro ao listar metas");
-            return "meta/listar";
-        }
+        List<Meta> metas = metaService.listarPorUsuario(usuario.getId());
+        model.addAttribute("metas", metas);
+        return "meta/listar";
     }
 
     @GetMapping("/criar")
@@ -57,13 +51,8 @@ public class MetaController {
             metaService.salvar(request, usuario);
             redirectAttributes.addFlashAttribute("sucesso", "Meta criada com sucesso!");
             return "redirect:/metas";
-
         } catch (MetaDuplicadaException e) {
             result.rejectValue("data", "error.meta", "Já foi registrada uma meta para esse mês");
-            return "meta/criar";
-
-        } catch (Exception e) {
-            result.reject("error.meta", "Um erro inesperado ocorreu, tente novamente!");
             return "meta/criar";
         }
     }
@@ -72,39 +61,19 @@ public class MetaController {
     public String excluir(@PathVariable Long id,
                           @AuthenticationPrincipal Usuario usuario,
                           RedirectAttributes redirectAttributes) {
-        try {
-            metaService.excluir(id, usuario.getId());
-            redirectAttributes.addFlashAttribute("sucesso", "Meta excluída com sucesso!");
-            return "redirect:/metas";
 
-        } catch (AcessoNegadoException e) {
-            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para deletar esta meta");
-            return "redirect:/metas";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
-            return "redirect:/metas";
-        }
+        metaService.excluir(id, usuario.getId());
+        redirectAttributes.addFlashAttribute("sucesso", "Meta excluída com sucesso!");
+        return "redirect:/metas";
     }
 
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id,
                          Model model,
-                         @AuthenticationPrincipal Usuario usuario,
-                         RedirectAttributes redirectAttributes) {
-        try {
-            Meta m = metaService.buscarPorId(id, usuario.getId());
-            model.addAttribute("meta", new NovaMetaDTO(m));
-            return "meta/criar";
-
-        } catch (AcessoNegadoException e) {
-            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para editar essa meta");
-            return "redirect:/metas";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", "Meta não encontrada");
-            return "redirect:/metas";
-        }
+                         @AuthenticationPrincipal Usuario usuario) {
+        Meta m = metaService.buscarPorId(id, usuario.getId());
+        model.addAttribute("meta", new NovaMetaDTO(m));
+        return "meta/criar";
     }
 
     @PutMapping
@@ -120,14 +89,9 @@ public class MetaController {
             metaService.editar(request, usuario.getId());
             redirectAttributes.addFlashAttribute("sucesso", "Meta atualizada com sucesso!");
             return "redirect:/metas";
-
-        } catch (AcessoNegadoException e) {
-            redirectAttributes.addFlashAttribute("erro", "Você não tem permissão para editar essa meta");
-            return "redirect:/metas";
-
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("erro", "Um erro inesperado ocorreu, tente novamente!");
-            return "redirect:/metas";
+        } catch (MetaDuplicadaException e) {
+            result.rejectValue("data", "error.meta", "Já foi registrada uma meta para esse mês");
+            return "meta/criar";
         }
     }
 }

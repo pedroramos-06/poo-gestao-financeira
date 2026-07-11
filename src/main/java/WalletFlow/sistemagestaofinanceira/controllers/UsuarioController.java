@@ -39,13 +39,8 @@ public class UsuarioController {
         try {
             usuarioService.register(DTO);
             return "redirect:/dashboard";
-
         } catch (EmailJaExistenteException e) {
             result.rejectValue("email", "error.usuario", e.getMessage());
-            return "user/register";
-
-        } catch (Exception e) {
-            result.rejectValue(null,"error.usuario", "Um erro inesperado ocorreu, tente novamente!" );
             return "user/register";
         }
     }
