@@ -21,7 +21,7 @@ public class MetaService {
     }
 
     @Transactional
-    public void salvar(NovaMetaDTO dto, Usuario usuario) {
+    public void salvar(NovaMetaDTO dto, Usuario usuario) throws MetaDuplicadaException {
         Meta meta = dto.toEntity();
         meta.setUsuario(usuario);
 
@@ -55,7 +55,7 @@ public class MetaService {
     }
 
     @Transactional
-    public void editar(NovaMetaDTO dto, Long usuarioId){
+    public void editar(NovaMetaDTO dto, Long usuarioId) throws MetaDuplicadaException {
         Meta meta = buscarPorId(dto.getId(), usuarioId);
 
         if(!meta.getData().equals(dto.getData())){
