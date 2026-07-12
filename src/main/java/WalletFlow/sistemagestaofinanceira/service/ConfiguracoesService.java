@@ -38,4 +38,11 @@ public class ConfiguracoesService {
         metaRepository.deleteByUsuarioId(usuarioId);
         transacaoRepository.deleteByUsuarioId(usuarioId);
     }
+
+    public String validarNome(String nome) {
+        if (nome == null || nome.isBlank() || nome.length() < 5 || nome.length() > 50) {
+            return "O nome deve ter entre 5 e 50 caracteres";
+        }
+        return null;
+    }
 }

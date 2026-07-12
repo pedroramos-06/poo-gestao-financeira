@@ -83,8 +83,9 @@ public class ConfiguracoesController {
             return "redirect:/configuracoes/confirmar-senha?acao=nome";
         }
 
-        if (nome == null || nome.isBlank() || nome.length() < 5 || nome.length() > 50) {
-            redirectAttributes.addFlashAttribute("erroNome", "O nome deve ter entre 5 e 50 caracteres");
+        String erro = configuracoesService.validarNome(nome);
+        if (erro != null) {
+            redirectAttributes.addFlashAttribute("erroNome", erro);
             redirectAttributes.addFlashAttribute("nomeDigitado", nome);
             redirectAttributes.addFlashAttribute("abrirModal", "nome");
             return "redirect:/configuracoes";
