@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
         AND (:tipo IS NULL OR t.tipo = :tipo)
         AND t.data BETWEEN :inicio AND :fim
     """)
-    double somarPorTipo(
+    BigDecimal somarPorTipo(
             @Param("usuarioId") Long usuarioId,
             @Param("categoria") Categoria categoria,
             @Param("tipo") TipoTransacao tipo,
@@ -49,5 +50,5 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
         FROM Transacao t
         WHERE t.usuario.id = :usuarioId
     """)
-    double getSaldo( @Param("usuarioId") Long usuarioId );
+    BigDecimal getSaldo( @Param("usuarioId") Long usuarioId );
 }

@@ -31,17 +31,12 @@ public class DashboardController {
             periodo = YearMonth.now();
         }
 
-        try{
-            DashboardDTO dashboard = dashboardService.getResumo(usuario.getId(), periodo);
+        DashboardDTO dashboard = dashboardService.getResumo(usuario.getId(), periodo);
 
-            model.addAttribute("usuario", usuario.getNome());
-            model.addAttribute("periodoSelecionado", periodo);
-            model.addAttribute("dashboard", dashboard);
-            return "dashboard/dashboard";
-        }  catch (Exception e) {
-            model.addAttribute("erro", "Erro ao carregar dashboard");
-            return "dashboard/dashboard";
-        }
+        model.addAttribute("usuario", usuario.getNome());
+        model.addAttribute("periodoSelecionado", periodo);
+        model.addAttribute("dashboard", dashboard);
+        return "dashboard/dashboard";
     }
 
 }

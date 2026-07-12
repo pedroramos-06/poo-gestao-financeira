@@ -38,7 +38,7 @@ public class TransacaoService {
     }
 
     @Transactional(readOnly = true)
-    public Transacao buscarPorId(Long id, Long usuarioId) throws AcessoNegadoException {
+    public Transacao buscarPorId(Long id, Long usuarioId) {
         Transacao transacao = transacaoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Transação não encontrada"));
 
@@ -50,14 +50,14 @@ public class TransacaoService {
     }
 
     @Transactional
-    public void excluir(Long id, Long usuarioId) throws AcessoNegadoException{
+    public void excluir(Long id, Long usuarioId) {
         buscarPorId(id, usuarioId); //validar permissão
 
         transacaoRepository.deleteById(id);
     }
 
     @Transactional
-    public void editar(NovaTransacaoDTO dto, Long usuarioId) throws AcessoNegadoException {
+    public void editar(NovaTransacaoDTO dto, Long usuarioId) {
         Transacao transacao = buscarPorId(dto.getId(), usuarioId);
 
         transacao.setCategoria(dto.getCategoria());

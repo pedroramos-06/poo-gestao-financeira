@@ -1,10 +1,10 @@
 package WalletFlow.sistemagestaofinanceira.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -12,24 +12,12 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class DashboardDTO {
-    @NotBlank
     private YearMonth periodo;
-
-    @NotBlank
-    private double saldo;
-
-    @NotBlank
-    private double totalEntradas;
-
-    @NotBlank
-    private double totalSaidas;
-
-    @NotBlank
-    private double meta;
-
-    @NotBlank
+    private BigDecimal saldo;
+    private BigDecimal totalEntradas;
+    private BigDecimal totalSaidas;
+    private BigDecimal meta;
     private double metaAtingida;
-
-    @NotBlank
+    private String metaCor;
     private List<ResumoCategoriaDTO> resumoGastosPorCategoria;
 }

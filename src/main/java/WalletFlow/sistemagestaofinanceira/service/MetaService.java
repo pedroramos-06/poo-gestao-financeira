@@ -32,7 +32,7 @@ public class MetaService {
     }
 
     @Transactional(readOnly = true)
-    public Meta buscarPorId(Long id, Long usuarioId) throws AcessoNegadoException {
+    public Meta buscarPorId(Long id, Long usuarioId) {
         Meta meta = metaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Meta não encontrada"));
 
         if(!meta.getUsuario().getId().equals(usuarioId)){
@@ -44,19 +44,25 @@ public class MetaService {
 
     @Transactional(readOnly = true)
     public List<Meta> listarPorUsuario(Long usuarioId) {
-        return metaRepository.findByUsuarioId(usuarioId);
+        return metaRepository.findByUsuarioIdOrderByDataDesc(usuarioId);
     }
 
     @Transactional
-    public void excluir(Long id, Long usuarioId) throws AcessoNegadoException {
+    public void excluir(Long id, Long usuarioId) {
         buscarPorId(id, usuarioId); //validar permissão
 
         metaRepository.deleteById(id);
     }
 
     @Transactional
-    public void editar(NovaMetaDTO dto, Long usuarioId) throws AcessoNegadoException{
+    public void editar(NovaMetaDTO dto, Long usuarioId) throws MetaDuplicadaException {
         Meta meta = buscarPorId(dto.getId(), usuarioId);
+
+        if(!meta.getData().equals(dto.getData())){
+            if(metaRepository.findByUsuarioIdAndData(usuarioId, dto.getData()).isPresent()){
+                throw new MetaDuplicadaException();
+            }
+        }
 
         meta.setData(dto.getData());
         meta.setValor(dto.getValor());
