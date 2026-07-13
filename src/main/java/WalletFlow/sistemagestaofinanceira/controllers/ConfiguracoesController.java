@@ -1,5 +1,6 @@
 package WalletFlow.sistemagestaofinanceira.controllers;
 
+import WalletFlow.sistemagestaofinanceira.dto.AlterarNomeDTO;
 import WalletFlow.sistemagestaofinanceira.dto.ConfiguracoesDTO;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.security.SessaoVerificada;
@@ -76,22 +77,22 @@ public class ConfiguracoesController {
     }
 
     @PutMapping("/nome")
-    public String alterarNome(@RequestParam String nome,
+    public String alterarNome(@Valid AlterarNomeDTO request,
+                              BindingResult result,
                               @AuthenticationPrincipal Usuario usuario,
                               RedirectAttributes redirectAttributes) {
         if (!sessaoVerificada.isValida()) {
             return "redirect:/configuracoes/confirmar-senha?acao=nome";
         }
 
-        String erro = configuracoesService.validarNome(nome);
-        if (erro != null) {
-            redirectAttributes.addFlashAttribute("erroNome", erro);
-            redirectAttributes.addFlashAttribute("nomeDigitado", nome);
+        if (result.hasErrors()) {
+            redirectAttributes.addFlashAttribute("erroNome", result.getFieldError("nome").getDefaultMessage());
+            redirectAttributes.addFlashAttribute("nomeDigitado", request.getNome());
             redirectAttributes.addFlashAttribute("abrirModal", "nome");
             return "redirect:/configuracoes";
         }
 
-        configuracoesService.alterarNome(usuario, nome);
+        configuracoesService.alterarNome(usuario, request.getNome());
         redirectAttributes.addFlashAttribute("sucesso", "Nome alterado com sucesso!");
         return "redirect:/configuracoes";
     }
