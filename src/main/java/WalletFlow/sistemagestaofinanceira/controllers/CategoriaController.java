@@ -2,7 +2,6 @@ package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.NovaCategoriaDTO;
 import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaJaExisteException;
-import WalletFlow.sistemagestaofinanceira.exceptions.MetaDuplicadaException;
 import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.service.CategoriaService;

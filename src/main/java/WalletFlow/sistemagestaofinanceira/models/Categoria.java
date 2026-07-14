@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "nome"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"usuario_id", "nome", "tipo"}))
 public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,9 +29,17 @@ public class Categoria {
     @Column(nullable = false)
     private String cor;
 
-    public Categoria(String nome, TipoTransacao tipo, String cor) {
+    @Column(nullable = false)
+    private boolean padrao = false;
+
+    public Categoria(String nome, TipoTransacao tipo, String cor, Boolean padrao) {
         this.nome = nome;
         this.tipo = tipo;
         this.cor = cor;
+        this.padrao = padrao;
+    }
+
+    public Categoria (String nome, TipoTransacao tipo, String cor) {
+        this(nome, tipo, cor, false);
     }
 }

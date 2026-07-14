@@ -2,7 +2,7 @@ package WalletFlow.sistemagestaofinanceira.service;
 
 import WalletFlow.sistemagestaofinanceira.dto.DashboardDTO;
 import WalletFlow.sistemagestaofinanceira.dto.ResumoCategoriaDTO;
-import WalletFlow.sistemagestaofinanceira.enums.Categoria;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
@@ -112,7 +112,7 @@ public class DashboardService {
     }
 
     private double calcularMetaAtingida(BigDecimal saidas, BigDecimal meta) {
-        if (meta.compareTo(BigDecimal.ZERO) <= 0) {
+        if (meta == null || meta.compareTo(BigDecimal.ZERO) <= 0) {
             return 0.0;
         }
         return saidas
