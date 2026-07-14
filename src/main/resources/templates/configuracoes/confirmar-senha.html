@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR" th:data-bs-theme="${usuario.tema.valor}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Senha</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
+<nav class="navbar navbar-expand px-5 bg-dark border-bottom" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/dashboard">WalletFlow</a>
+        <ul class="navbar-nav align-items-center gap-4">
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/metas">Metas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/transacoes">Transações</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/configuracoes">
+                    <i class="bi bi-person-circle fs-5"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main class="container d-flex justify-content-center align-items-center flex-grow-1">
+    <div class="card shadow-sm" style="width: 350px">
+        <div class="card-body px-4 pt-2">
+            <i class="bi bi-shield-lock fs-1 text-primary d-block text-center"></i>
+
+            <h1 class="card-title text-center fs-4 fw-bold mb-2">Confirme sua senha</h1>
+            <p class="text-muted text-center small mb-1">
+                Por segurança, digite sua senha para continuar com esta ação.
+            </p>
+
+            <form method="post" th:action="@{/configuracoes/confirmar-senha}">
+                <input type="hidden" name="acao" th:value="${acao}" />
+
+                <label for="senha" class="form-label">Senha</label>
+                <input type="password" class="form-control"
+                       th:classappend="${erroSenha != null ? 'is-invalid' : ''}"
+                       id="senha" name="senha" placeholder="Digite sua senha" autofocus>
+                <div class="invalid-feedback" th:text="${erroSenha}"></div>
+
+                <button type="submit" class="btn btn-primary mt-4 w-100">Confirmar</button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

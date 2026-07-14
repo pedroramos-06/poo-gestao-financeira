@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR" th:data-bs-theme="${usuario.tema.valor}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link th:href="@{/styles.css}" rel="stylesheet">
+    <style>
+        body, body *,
+        .form-control,
+        .input-group-text,
+        .alert {
+            transition: background-color 0.3s ease-in,
+            color 0.3s ease-in,
+            border-color 0.3s ease-in;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
+<nav class="navbar navbar-expand px-5 bg-dark border-bottom" data-bs-theme="dark">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="/dashboard">WalletFlow</a>
+        <ul class="navbar-nav align-items-center gap-4">
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/metas">Metas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/transacoes">Transações</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/configuracoes">
+                    <i class="bi bi-person-circle fs-5"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<main class="container py-4">
+    <div th:if="${sucesso != null or erro != null}"
+         class="alert alert-dismissible fade show"
+         th:classappend="${sucesso != null ? 'alert-success' : 'alert-danger'}"
+         role="alert">
+        <span th:text="${sucesso != null ? sucesso : erro}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <div class="mb-4">
+        <h2 class="mb-1">Configurações da Conta</h2>
+        <p class="text-muted mb-0">Gerencie as informações de sua conta e suas preferências</p>
+    </div>
+
+    <div class="row g-3">
+        <div class="col">
+            <div class="card card-body h-100">
+                <div class="d-flex justify-content-between mb-3">
+                    <h4 class="card-title"><i class="bi bi-person me-2"></i>Usuário</h4>
+
+                    <form th:action="@{/logout}" method="post">
+                        <button type="submit" class="btn btn-outline-danger">Sair</button>
+                    </form>
+                </div>
+
+                <p class="fw-semibold mb-2">Nome:
+                    <span class="text-muted" th:text="${usuario.nome}"></span>
+                </p>
+                <p class="fw-semibold mb-2">Email:
+                    <span class="text-muted" th:text="${usuario.email}"></span>
+                </p>
+                <p class="fw-semibold mb-2">Data de Criação:
+                    <span class="text-muted" th:text="${#temporals.format(usuario.dataCriacao, 'dd/MM/yyyy HH:mm')}"></span>
+                </p>
+                <p class="fw-semibold">Estado da Sessão:
+                    <span id="statusSessao" class="text-muted">Não Verificada</span>
+                </p>
+
+                <div class="d-flex gap-2 mt-auto">
+                    <a class="w-100 btn btn-primary"
+                       th:href="@{/configuracoes/confirmar-senha(acao='nome')}">
+                        Trocar Nome
+                    </a>
+
+                    <a class="w-100 btn btn-danger"
+                       th:href="@{/configuracoes/confirmar-senha(acao='excluir-dados')}">
+                        Excluir Dados
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <form class="card card-body" th:action="@{/configuracoes}" method="post" th:object="${configuracoes}">
+                <input type="hidden" name="_method" value="put">
+                <h4 class="card-title mb-3"><i class="bi bi-gear me-2"></i>Preferencias Gerais</h4>
+
+                <label class="fw-semibold">Tema</label>
+                <div class="d-flex gap-2 mb-3">
+                    <input type="radio" class="btn-check" id="claro" autocomplete="off"
+                           th:field="*{tema}" th:value="CLARO">
+                    <label class="btn bg-body-tertiary w-100" for="claro">Claro</label>
+
+                    <input type="radio" class="btn-check" id="escuro" autocomplete="off"
+                           th:field="*{tema}" th:value="ESCURO">
+                    <label class="btn bg-body-tertiary w-100" for="escuro">Escuro</label>
+                </div>
+
+                <label class="fw-semibold" for="metaPadrao">Meta Padrão</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text">R$</span>
+                    <input class="form-control rounded-end" id="metaPadrao" type="number" step="0.01"
+                           placeholder="Meta Padrão" oninput="this.classList.remove('is-invalid')"
+                           th:field="*{metaPadrao}" th:classappend="${#fields.hasErrors('metaPadrao') ? 'is-invalid' : ''}">
+                    <div class="invalid-feedback" th:errors="*{metaPadrao}"></div>
+                </div>
+
+                <button type="submit" class="btn btn-success mt-1">Salvar Configurações</button>
+            </form>
+        </div>
+
+        <div class="col-12">
+            <div class="card card-body">
+                <h4 class="card-title"><i class="bi bi-trash3 me-2"></i>Lixeira</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNome" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <form class="modal-content" method="post" th:action="@{/configuracoes/nome}">
+                <input type="hidden" name="_method" value="put"/>
+
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Trocar Nome</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body mt-3 mb-4">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" id="nome" name="nome" maxlength="50"
+                           placeholder="Digite o novo nome" oninput="this.classList.remove('is-invalid')"
+                           th:value="${nomeDigitado != null ? nomeDigitado : usuario.nome}"
+                           th:classappend="${erroNome != null ? 'is-invalid' : ''}">
+                    <div class="invalid-feedback" th:text="${erroNome}"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Salvar Nome</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalExcluir" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Excluir Dados</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body py-4">
+                    <div class="alert alert-danger d-flex align-items-center" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+
+                        <p class="mb-0"><strong>Atenção!</strong> Você está prestes a excluir todas as transações e metas.
+                        Essa ação é <strong>permanente</strong> e não poderá ser desfeita.</p>
+                    </div>
+
+                    <label for="confirmar" class="form-label">Para confirmar, digite <strong>EXCLUIR</strong> no campo abaixo:</label>
+                    <input type="text" class="form-control" id="confirmar" placeholder="Digite EXCLUIR">
+                </div>
+                <form class="modal-footer" method="post" th:action="@{/configuracoes/excluir-dados}">
+                    <input type="hidden" name="_method" value="delete"/>
+                    <button id="btnExcluir" type="submit" class="btn btn-danger" disabled>Excluir Dados</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    //Temas
+    const temas = document.querySelectorAll("input[name='tema']");
+
+    function aplicarTema(valor) {
+        document.documentElement.setAttribute("data-bs-theme", valor === "CLARO" ? "light" : "dark");
+    }
+
+    temas.forEach(tema => {
+        tema.addEventListener("change", function () {
+            if (this.checked) aplicarTema(this.value);
+        })
+    });
+
+    const temaJaMarcado = document.querySelector("input[name='tema']:checked");
+    if (temaJaMarcado) {
+        aplicarTema(temaJaMarcado.value);
+    }
+
+    //Modal
+    const modalNome = document.getElementById("modalNome");
+    const nomeInput = document.getElementById("nome");
+
+    modalNome.addEventListener("shown.bs.modal", () => {
+        nomeInput.focus();
+        nomeInput.setSelectionRange(nomeInput.value.length, nomeInput.value.length);
+    })
+
+    const botao = document.getElementById("btnExcluir");
+    document.getElementById("confirmar").addEventListener("input", function() {
+        botao.disabled = this.value !== "EXCLUIR";
+    })
+</script>
+<script th:inline="javascript">
+    const abrirModal = /*[[${abrirModal}]]*/ null;
+    const modais = { nome: "modalNome", "excluir-dados": "modalExcluir" };
+
+    if (modais[abrirModal]) {
+        new bootstrap.Modal(document.getElementById(modais[abrirModal])).show();
+    }
+</script>
+<script th:inline="javascript">
+    let tempoRestante = /*[[${tempoRestante}]]*/ 0;
+    const statusSessao = document.getElementById("statusSessao");
+
+    function atualizarTimer() {
+        if (tempoRestante <= 0) {
+            statusSessao.textContent = "Não Verificada";
+            statusSessao.className = "text-muted";
+            return;
+        }
+
+        const min = Math.floor(tempoRestante / 60);
+        const seg = tempoRestante % 60;
+        statusSessao.textContent = `Verificada (${min.toString().padStart(2, "0")}:${seg.toString().padStart(2, "0")})`;
+        statusSessao.className = "text-success";
+        tempoRestante--;
+    }
+
+    atualizarTimer();
+    setInterval(atualizarTimer, 1000);
+</script>
+</body>
+</html>
