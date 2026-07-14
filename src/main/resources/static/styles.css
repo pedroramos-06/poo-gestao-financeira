@@ -1,0 +1,34 @@
+/* noinspection CssUnresolvedCustomProperty */
+.btn-outline-theme {
+    --bs-btn-color: var(--bs-body-color);
+    --bs-btn-border-color: var(--bs-body-color);
+    --bs-btn-hover-bg: var(--bs-body-color);
+    --bs-btn-hover-color: var(--bs-body-bg);
+}
+
+/* noinspection CssUnresolvedCustomProperty */
+.btn-theme {
+    --bs-btn-color: var(--bs-body-color);
+    --bs-btn-bg: var(--bs-tertiary-bg);
+    --bs-btn-border-color: var(--bs-tertiary-bg);
+
+    --bs-btn-hover-color: var(--bs-body-color);
+    --bs-btn-hover-bg: var(--bs-secondary-bg);
+    --bs-btn-hover-border-color: var(--bs-secondary-bg);
+
+    --bs-btn-active-color: var(--bs-body-color);
+    --bs-btn-active-bg: var(--bs-secondary-bg);
+    --bs-btn-active-border-color: var(--bs-secondary-bg);
+}
+
+/* noinspection CssUnresolvedCustomProperty */
+[data-bs-theme="light"] .badge-categoria {
+    background-color: color-mix(var(--cor-categoria) 20%, white);
+    color: var(--cor-categoria);
+}
+
+/* noinspection CssUnresolvedCustomProperty */
+[data-bs-theme="dark"] .badge-categoria {
+    background-color: var(--cor-categoria);
+    color: white
+}

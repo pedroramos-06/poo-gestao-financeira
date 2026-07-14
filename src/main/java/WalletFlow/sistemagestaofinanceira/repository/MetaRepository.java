@@ -9,4 +9,5 @@ import java.util.Optional;
 public interface MetaRepository extends JpaRepository<Meta, Long> {
     List<Meta> findByUsuarioIdOrderByDataDesc(Long usuarioId);
     Optional<Meta> findByUsuarioIdAndData(Long usuarioId, YearMonth data);
+    void deleteByUsuarioId(Long usuarioId);
 }

@@ -76,6 +76,10 @@ public class UsuarioService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 
+    public boolean senhaValida(Usuario usuario, String senhaDigitada) {
+        return passwordEncoder.matches(senhaDigitada, usuario.getSenha());
+    }
+
     private void criarCategoriasPadrao(Usuario usuario) {
         List<Categoria> padroes = List.of(
                 new Categoria("Salário", TipoTransacao.ENTRADA, "#198754"),

@@ -2,11 +2,12 @@ package WalletFlow.sistemagestaofinanceira.service;
 
 import WalletFlow.sistemagestaofinanceira.dto.DashboardDTO;
 import WalletFlow.sistemagestaofinanceira.dto.ResumoCategoriaDTO;
-import WalletFlow.sistemagestaofinanceira.models.Categoria;
+import WalletFlow.sistemagestaofinanceira.enums.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
+import WalletFlow.sistemagestaofinanceira.repository.UsuarioRepository;
 import WalletFlow.sistemagestaofinanceira.utils.MetaCorHelper;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,13 @@ public class DashboardService {
     private final TransacaoRepository transacaoRepository;
     private final MetaRepository metaRepository;
     private final CategoriaService categoriaService;
+    private final UsuarioRepository usuarioRepository;
 
-    public DashboardService(TransacaoRepository transacaoRepository, MetaRepository metaRepository, CategoriaService categoriaService) {
+    public DashboardService(TransacaoRepository transacaoRepository, MetaRepository metaRepository, CategoriaService categoriaService, UsuarioRepository usuarioRepository) {
         this.transacaoRepository = transacaoRepository;
         this.metaRepository = metaRepository;
         this.categoriaService = categoriaService;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public DashboardDTO getResumo(Long usuarioId, YearMonth periodo) {
@@ -105,7 +108,7 @@ public class DashboardService {
     private BigDecimal getMeta(Long usuarioId, YearMonth periodo) {
         return metaRepository.findByUsuarioIdAndData(usuarioId, periodo)
                 .map(Meta::getValor)
-                .orElse(BigDecimal.ZERO);
+                .orElseGet(() -> usuarioRepository.getMetaPadraoById(usuarioId));
     }
 
     private double calcularMetaAtingida(BigDecimal saidas, BigDecimal meta) {

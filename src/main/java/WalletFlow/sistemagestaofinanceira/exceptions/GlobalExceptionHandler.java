@@ -57,6 +57,9 @@ public class GlobalExceptionHandler {
         if (uri.startsWith("/metas")) {
             return "redirect:/metas";
         }
+        if (uri.startsWith("/configuracoes")) {
+            return "redirect:/configuracoes";
+        }
         if (uri.startsWith("/categorias")) {
             return "redirect:/categorias";
         }
