@@ -3,10 +3,12 @@ package WalletFlow.sistemagestaofinanceira.service;
 import WalletFlow.sistemagestaofinanceira.dto.NovaCategoriaDTO;
 
 import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
+import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaEmUsoException;
 import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaJaExisteException;
 import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.repository.CategoriaRepository;
+import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,9 +18,11 @@ import java.util.List;
 @Service
 public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
+    private final TransacaoRepository transacaoRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository) {
+    public CategoriaService(CategoriaRepository categoriaRepository, TransacaoRepository transacaoRepository) {
         this.categoriaRepository = categoriaRepository;
+        this.transacaoRepository = transacaoRepository;
     }
 
     @Transactional
@@ -51,6 +55,10 @@ public class CategoriaService {
     @Transactional
     public void excluir(Long id, Long usuarioId) {
         buscarPorId(id, usuarioId); //validar permissão
+
+        if(!transacaoRepository.findByCategoriaId(id).isEmpty()){
+            throw new CategoriaEmUsoException();
+        }
 
         categoriaRepository.deleteById(id);
     }

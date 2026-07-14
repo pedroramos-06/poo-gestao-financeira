@@ -31,6 +31,15 @@ public class GlobalExceptionHandler {
         return redirectBackTo(request);
     }
 
+    @ExceptionHandler(CategoriaEmUsoException.class)
+    public String handleCategoriaEmUso(CategoriaEmUsoException e,
+                                     HttpServletRequest request,
+                                     RedirectAttributes redirectAttributes) {
+        log.warn("Categoria em uso [{}]: {}", request.getRequestURI(), e.getMessage());
+        redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        return redirectBackTo(request);
+    }
+
     @ExceptionHandler(Exception.class)
     public String handleGeneric(Exception e,
                                 HttpServletRequest request,
@@ -47,6 +56,9 @@ public class GlobalExceptionHandler {
         }
         if (uri.startsWith("/metas")) {
             return "redirect:/metas";
+        }
+        if (uri.startsWith("/categorias")) {
+            return "redirect:/categorias";
         }
         return "redirect:/dashboard";
     }

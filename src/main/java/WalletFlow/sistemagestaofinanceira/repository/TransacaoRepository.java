@@ -55,4 +55,6 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
         WHERE t.usuario.id = :usuarioId
     """)
     BigDecimal getSaldo( @Param("usuarioId") Long usuarioId );
+
+    List<Transacao> findByCategoriaId(Long categoriaId);
 }
