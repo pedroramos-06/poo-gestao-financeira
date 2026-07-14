@@ -2,10 +2,12 @@ package WalletFlow.sistemagestaofinanceira.service;
 
 import WalletFlow.sistemagestaofinanceira.dto.NovaCategoriaDTO;
 
+import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
-import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaEmUsoException;
 import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaJaExisteException;
+import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaProtegidaException;
 import WalletFlow.sistemagestaofinanceira.models.Categoria;
+import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.repository.CategoriaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
@@ -53,12 +55,16 @@ public class CategoriaService {
     }
 
     @Transactional
-    public void excluir(Long id, Long usuarioId) {
-        buscarPorId(id, usuarioId); //validar permissão
+    public void excluir(Long id, Long usuarioId) throws CategoriaProtegidaException {
+        Categoria categoria = buscarPorId(id, usuarioId); //validar permissão
 
-        if(!transacaoRepository.findByCategoriaId(id).isEmpty()){
-            throw new CategoriaEmUsoException();
+        if (categoria.isPadrao()) {
+            throw new CategoriaProtegidaException();
         }
+
+        List<Transacao> transacoes = transacaoRepository.findByCategoriaId(id);
+        transacoes.forEach(t -> t.setCategoria(categoriaRepository.findPadraoByUsuarioIdAndTipo(usuarioId, t.getTipo())));
+        transacaoRepository.saveAll(transacoes);
 
         categoriaRepository.deleteById(id);
     }
@@ -78,5 +84,22 @@ public class CategoriaService {
         categoria.setCor(dto.getCor());
 
         categoriaRepository.save(categoria);
+    }
+
+    @Transactional
+    public void criarCategoriasPadrao(Usuario usuario) {
+        List<Categoria> padroes = List.of(
+                new Categoria("Outros", TipoTransacao.ENTRADA, "#343232", true),
+                new Categoria("Salário", TipoTransacao.ENTRADA, "#198754"),
+                new Categoria("Freelance", TipoTransacao.ENTRADA, "#20c997"),
+                new Categoria("Alimentação", TipoTransacao.SAIDA, "#dc3545"),
+                new Categoria("Transporte", TipoTransacao.SAIDA, "#fd7e14"),
+                new Categoria("Aluguel", TipoTransacao.SAIDA, "#6f42c1"),
+                new Categoria("Lazer", TipoTransacao.SAIDA, "#0dcaf0"),
+                new Categoria("Outros", TipoTransacao.SAIDA, "#343232", true)
+        );
+
+        padroes.forEach(c -> c.setUsuario(usuario));
+        categoriaRepository.saveAll(padroes);
     }
 }

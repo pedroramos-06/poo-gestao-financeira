@@ -31,11 +31,11 @@ public class GlobalExceptionHandler {
         return redirectBackTo(request);
     }
 
-    @ExceptionHandler(CategoriaEmUsoException.class)
-    public String handleCategoriaEmUso(CategoriaEmUsoException e,
+    @ExceptionHandler(CategoriaProtegidaException.class)
+    public String handleCategoriaEmUso(CategoriaProtegidaException e,
                                      HttpServletRequest request,
                                      RedirectAttributes redirectAttributes) {
-        log.warn("Categoria em uso [{}]: {}", request.getRequestURI(), e.getMessage());
+        log.warn("Categoria protegida[{}]: {}", request.getRequestURI(), e.getMessage());
         redirectAttributes.addFlashAttribute("erro", e.getMessage());
         return redirectBackTo(request);
     }
