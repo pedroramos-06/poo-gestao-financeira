@@ -8,10 +8,10 @@
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-light">
-<nav class="navbar navbar-expand px-5 bg-dark" data-bs-theme="dark">
+<nav class="navbar navbar-expand px-5 bg-dark border-bottom" data-bs-theme="dark">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="/dashboard">WalletFlow</a>
-        <ul class="navbar-nav gap-4">
+        <ul class="navbar-nav align-items-center gap-4">
             <li class="nav-item">
                 <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
@@ -25,9 +25,9 @@
                 <a class="nav-link" href="/transacoes">Transações</a>
             </li>
             <li class="nav-item">
-                <form th:action="@{/logout}" method="post">
-                    <button type="submit" class="btn btn-outline-danger">Sair</button>
-                </form>
+                <a class="nav-link" href="/configuracoes">
+                    <i class="bi bi-person-circle fs-5"></i>
+                </a>
             </li>
         </ul>
     </div>

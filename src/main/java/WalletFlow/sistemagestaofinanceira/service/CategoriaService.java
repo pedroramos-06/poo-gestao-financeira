@@ -73,6 +73,10 @@ public class CategoriaService {
     public void editar(NovaCategoriaDTO dto, Long usuarioId) throws CategoriaJaExisteException {
         Categoria categoria = buscarPorId(dto.getId(), usuarioId); //validar permissão
 
+        if (categoria.isPadrao()) {
+            throw new CategoriaProtegidaException();
+        }
+
         if(!dto.getNome().equals(categoria.getNome())) {
             if(categoriaRepository.findByUsuarioIdAndNome(usuarioId, dto.getNome()).isPresent()) {
                 throw new CategoriaJaExisteException();
