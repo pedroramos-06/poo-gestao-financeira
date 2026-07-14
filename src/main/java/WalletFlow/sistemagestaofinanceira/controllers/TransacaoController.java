@@ -2,8 +2,10 @@ package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
+import WalletFlow.sistemagestaofinanceira.service.CategoriaService;
 import WalletFlow.sistemagestaofinanceira.service.TransacaoService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,9 +21,11 @@ import java.util.List;
 @RequestMapping("/transacoes")
 public class TransacaoController {
     private final TransacaoService transacaoService;
+    private final CategoriaService categoriaService;
 
-    public TransacaoController(TransacaoService transacaoService) {
+    public TransacaoController(TransacaoService transacaoService, CategoriaService categoriaService) {
         this.transacaoService = transacaoService;
+        this.categoriaService = categoriaService;
     }
 
     @GetMapping
@@ -29,12 +33,16 @@ public class TransacaoController {
                          @ModelAttribute("filtros") FiltrosTransacaoDTO filtros,
                          Model model) {
         List<Transacao> transacoes = transacaoService.listar(usuario.getId(), filtros);
+        List<Categoria> categorias = categoriaService.listarPorUsuario(usuario.getId());
+        model.addAttribute("categorias", categorias);
         model.addAttribute("transacoes", transacoes);
         return "transacoes/listar";
     }
 
     @GetMapping("/criar")
-    public String criar(Model model) {
+    public String criar(@AuthenticationPrincipal Usuario usuario, Model model) {
+        List<Categoria> categorias = categoriaService.listarPorUsuario(usuario.getId());
+        model.addAttribute("categorias", categorias);
         model.addAttribute("transacao", new NovaTransacaoDTO());
         return "transacoes/criar";
     }

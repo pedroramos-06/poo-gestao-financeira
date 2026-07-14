@@ -61,7 +61,6 @@ public class TransacaoService {
         Transacao transacao = buscarPorId(dto.getId(), usuarioId);
 
         transacao.setCategoria(dto.getCategoria());
-        transacao.setTipo(dto.getTipo());
         transacao.setDescricao(dto.getDescricao());
         transacao.setValor(dto.getValor());
         transacao.setData(dto.getData());

@@ -15,6 +15,9 @@
                     <a class="nav-link" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/categorias">Categorias</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/metas">Metas</a>
                 </li>
                 <li class="nav-item">
@@ -62,9 +65,9 @@
                     <label class="form-label" for="categoria">Categoria</label>
                     <select class="form-select" id="categoria" th:field="*{categoria}">
                         <option value="" selected>Todas</option>
-                        <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
-                                th:value="${cat}"
-                                th:text="${cat.descricao}">
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.id}"
+                                th:text="${cat.nome}">
                         </option>
                     </select>
                 </div>
@@ -105,8 +108,8 @@
                     <td class="text-start" th:text="${t.descricao}"></td>
                     <td>
                         <span class="badge"
-                              th:style="|color: ${t.categoria.corHex}; background-color: color-mix(${t.categoria.corHex} 20%, white);|"
-                              th:text="${t.categoria.descricao}">
+                              th:style="|color: ${t.categoria.cor}; background-color: color-mix(${t.categoria.cor} 20%, white);|"
+                              th:text="${t.categoria.nome}">
                         </span>
                     </td>
                     <td>

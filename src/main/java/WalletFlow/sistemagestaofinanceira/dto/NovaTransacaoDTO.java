@@ -1,7 +1,7 @@
 package WalletFlow.sistemagestaofinanceira.dto;
 
-import WalletFlow.sistemagestaofinanceira.enums.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -27,9 +27,6 @@ public class NovaTransacaoDTO {
     @Digits(integer = 8, fraction = 2, message = "O valor deve ter no máximo 8 dígitos inteiros e 2 decimais")
     private BigDecimal valor;
 
-    @NotNull(message = "O tipo da transação é obrigatório")
-    private TipoTransacao tipo;
-
     @NotNull(message = "A categoria é obrigatória")
     private Categoria categoria;
 
@@ -41,12 +38,11 @@ public class NovaTransacaoDTO {
         this.id = transacao.getId();
         this.descricao = transacao.getDescricao();
         this.valor = transacao.getValor();
-        this.tipo = transacao.getTipo();
         this.categoria = transacao.getCategoria();
         this.data = transacao.getData();
     }
 
     public Transacao toEntity() {
-        return new Transacao(this.descricao, this.valor, this.tipo, this.categoria, this.data);
+        return new Transacao(this.descricao, this.valor, this.categoria, this.data);
     }
 }

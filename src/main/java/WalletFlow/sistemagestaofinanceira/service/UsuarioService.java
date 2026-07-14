@@ -1,8 +1,11 @@
 package WalletFlow.sistemagestaofinanceira.service;
 
 import WalletFlow.sistemagestaofinanceira.dto.NovoUsuarioDTO;
+import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.exceptions.EmailJaExistenteException;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
+import WalletFlow.sistemagestaofinanceira.repository.CategoriaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.UsuarioRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,17 +18,24 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final HttpServletRequest request;
+    private final CategoriaRepository categoriaRepository;
 
-    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder, HttpServletRequest request) {
+    public UsuarioService(UsuarioRepository repository,
+                          PasswordEncoder passwordEncoder,
+                          HttpServletRequest request,
+                          CategoriaRepository categoriaRepository) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.request = request;
+        this.categoriaRepository = categoriaRepository;
     }
 
     @Transactional
@@ -56,6 +66,7 @@ public class UsuarioService implements UserDetailsService {
                 context
         );
 
+        criarCategoriasPadrao(usuario);
         return usuarioSalvo;
     }
 
@@ -63,5 +74,19 @@ public class UsuarioService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return repository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+    }
+
+    private void criarCategoriasPadrao(Usuario usuario) {
+        List<Categoria> padroes = List.of(
+                new Categoria("Salário", TipoTransacao.ENTRADA, "#198754"),
+                new Categoria("Freelance", TipoTransacao.ENTRADA, "#20c997"),
+                new Categoria("Alimentação", TipoTransacao.SAIDA, "#dc3545"),
+                new Categoria("Transporte", TipoTransacao.SAIDA, "#fd7e14"),
+                new Categoria("Aluguel", TipoTransacao.SAIDA, "#6f42c1"),
+                new Categoria("Lazer", TipoTransacao.SAIDA, "#0dcaf0")
+        );
+
+        padroes.forEach(c -> c.setUsuario(usuario));
+        categoriaRepository.saveAll(padroes);
     }
 }

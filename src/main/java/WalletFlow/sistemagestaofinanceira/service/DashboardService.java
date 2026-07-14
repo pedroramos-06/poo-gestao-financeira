@@ -2,7 +2,7 @@ package WalletFlow.sistemagestaofinanceira.service;
 
 import WalletFlow.sistemagestaofinanceira.dto.DashboardDTO;
 import WalletFlow.sistemagestaofinanceira.dto.ResumoCategoriaDTO;
-import WalletFlow.sistemagestaofinanceira.enums.Categoria;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
@@ -21,10 +21,12 @@ public class DashboardService {
 
     private final TransacaoRepository transacaoRepository;
     private final MetaRepository metaRepository;
+    private final CategoriaService categoriaService;
 
-    public DashboardService(TransacaoRepository transacaoRepository, MetaRepository metaRepository) {
+    public DashboardService(TransacaoRepository transacaoRepository, MetaRepository metaRepository, CategoriaService categoriaService) {
         this.transacaoRepository = transacaoRepository;
         this.metaRepository = metaRepository;
+        this.categoriaService = categoriaService;
     }
 
     public DashboardDTO getResumo(Long usuarioId, YearMonth periodo) {
@@ -50,8 +52,9 @@ public class DashboardService {
     public List<ResumoCategoriaDTO> getResumoGastosPorCategoria(Long usuarioId, YearMonth periodo){
         List<ResumoCategoriaDTO> resultado = new ArrayList<>();
         BigDecimal totalSaidas = getSaidas(usuarioId, periodo);
+        List<Categoria> categorias = categoriaService.listarPorUsuario(usuarioId);
 
-        for (Categoria categoria : Categoria.values()) {
+        for (Categoria categoria : categorias) {
             BigDecimal valorCategoria = transacaoRepository.somarPorTipo(
                     usuarioId,
                     categoria,
@@ -70,10 +73,10 @@ public class DashboardService {
             }
 
             resultado.add(new ResumoCategoriaDTO(
-                    categoria.getDescricao(),
+                    categoria.getNome(),
                     valorCategoria,
                     percentual,
-                    categoria.getCorHex()
+                    categoria.getCor()
             ));
         }
         return resultado;
