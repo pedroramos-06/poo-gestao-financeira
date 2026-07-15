@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" th:data-bs-theme="${usuario.tema.valor}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,8 +7,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link th:href="@{/styles.css}" rel="stylesheet">
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light">
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
 <nav class="navbar navbar-expand px-5 bg-dark border-bottom" data-bs-theme="dark">
     <div class="container-fluid">
         <a class="navbar-brand fw-bold" href="/dashboard">WalletFlow</a>
@@ -63,8 +64,8 @@
             <tbody>
             <tr th:each="c : ${categorias}">
                 <td>
-                    <span class="badge"
-                          th:style="|color: ${c.cor}; background-color: color-mix(${c.cor} 20%, white);|"
+                    <span class="badge badge-categoria"
+                          th:style="|--cor-categoria: ${c.cor}|"
                           th:text="${c.nome}">
                     </span>
                 </td>
