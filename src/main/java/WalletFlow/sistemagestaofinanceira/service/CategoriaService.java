@@ -96,11 +96,11 @@ public class CategoriaService {
                 new Categoria("Outros", TipoTransacao.ENTRADA, "#343232", true),
                 new Categoria("Salário", TipoTransacao.ENTRADA, "#198754"),
                 new Categoria("Freelance", TipoTransacao.ENTRADA, "#20c997"),
+                new Categoria("Outros", TipoTransacao.SAIDA, "#343232", true),
                 new Categoria("Alimentação", TipoTransacao.SAIDA, "#dc3545"),
                 new Categoria("Transporte", TipoTransacao.SAIDA, "#fd7e14"),
                 new Categoria("Aluguel", TipoTransacao.SAIDA, "#6f42c1"),
-                new Categoria("Lazer", TipoTransacao.SAIDA, "#0dcaf0"),
-                new Categoria("Outros", TipoTransacao.SAIDA, "#343232", true)
+                new Categoria("Lazer", TipoTransacao.SAIDA, "#0dcaf0")
         );
 
         padroes.forEach(c -> c.setUsuario(usuario));
