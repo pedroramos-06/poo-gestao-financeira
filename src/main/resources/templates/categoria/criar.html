@@ -54,7 +54,7 @@
             <h4>Dados da Categoria</h4>
 
 
-            <div class="col-8">
+            <div class="col-6">
                 <label class="form-label" for="nome">Nome</label>
                 <input class="form-control" id="nome" type="text" placeholder="Nome da categoria"
                        oninput="this.classList.remove('is-invalid')"
@@ -62,7 +62,7 @@
                 <div class="invalid-feedback" th:errors="*{nome}"></div>
             </div>
 
-            <div class="col-6">
+            <div class="col-5">
                 <label class="form-label">Tipo de transação</label>
                 <div class="d-flex btn-group is-invalid" onclick="this.classList.remove('is-invalid')">
                     <input class="btn-check" id="entrada" type="radio" autocomplete="off"
