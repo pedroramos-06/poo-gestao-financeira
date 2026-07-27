@@ -32,7 +32,7 @@ public class CategoriaService {
         Categoria categoria = dto.toEntity();
         categoria.setUsuario(usuario);
 
-        if(categoriaRepository.findByUsuarioIdAndNome(usuario.getId(), dto.getNome()).isPresent()){
+        if(categoriaRepository.findByUsuarioIdAndNomeAndTipo(usuario.getId(), dto.getNome(),dto.getTipo()).isPresent()){
             throw new CategoriaJaExisteException();
         }
         categoriaRepository.save(categoria);
@@ -78,7 +78,7 @@ public class CategoriaService {
         }
 
         if(!dto.getNome().equals(categoria.getNome())) {
-            if(categoriaRepository.findByUsuarioIdAndNome(usuarioId, dto.getNome()).isPresent()) {
+            if(categoriaRepository.findByUsuarioIdAndNomeAndTipo(usuarioId, dto.getNome(), dto.getTipo()).isPresent()) {
                 throw new CategoriaJaExisteException();
             }
         }

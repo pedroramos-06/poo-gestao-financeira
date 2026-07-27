@@ -13,7 +13,7 @@ import java.util.Optional;
 
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     List<Categoria> findByUsuarioId(Long usuarioId);
-    Optional<Categoria> findByUsuarioIdAndNome(Long usuarioId, String nome);
+    Optional<Categoria> findByUsuarioIdAndNomeAndTipo(Long usuarioId, String nome, TipoTransacao tipo);
 
     @Query("""
         SELECT c FROM Categoria c
