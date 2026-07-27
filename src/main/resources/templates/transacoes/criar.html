@@ -73,19 +73,18 @@
 
             <div class="col-6">
                 <label class="form-label" for="categoria">Categoria</label>
-                <select class="form-select" id="categoria" name="categoria" disabled
+                <select class="form-select" id="categoria" th:field="*{categoriaId}" disabled
                         oninput="this.classList.remove('is-invalid')"
-                        th:classappend="${#fields.hasErrors('categoria') ? 'is-invalid' : ''}">
-                    <option value="" disabled hidden th:selected="*{categoria == null}">Escolha uma categoria</option>
+                        th:classappend="${#fields.hasErrors('categoriaId') ? 'is-invalid' : ''}">
+                    <option value="" disabled hidden>Escolha uma categoria</option>
                     <option th:each="cat : ${categorias}"
                             th:value="${cat.id}"
                             th:text="${cat.nome}"
-                            th:selected="*{categoria} == ${cat.id}"
                             th:data-tipo="${cat.tipo}"
                             th:style="'color: ' + ${cat.cor} + ';'">
                     </option>
                 </select>
-                <div class="invalid-feedback" th:errors="*{categoria}"></div>
+                <div class="invalid-feedback" th:errors="*{categoriaId}"></div>
             </div>
 
             <div class="col-6">
@@ -160,6 +159,8 @@
         if (radioCorrespondente) {
             radioCorrespondente.checked = true;
             radioCorrespondente.dataset.wasChecked = "true";
+            categoria.disabled = false;
+            atualizarCategorias(tipoDaCategoria);
         }
     }
 </script>

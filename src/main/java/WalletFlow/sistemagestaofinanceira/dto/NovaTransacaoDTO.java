@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class NovaTransacaoDTO {
-    private Long id; //Caso seja edição
+    private Long id; // Utilizado na edição
 
     @NotBlank(message = "A descrição é obrigatória")
     @Size(max = 75, message = "A descrição deve ter no máximo 75 caracteres")
@@ -28,7 +28,9 @@ public class NovaTransacaoDTO {
     private BigDecimal valor;
 
     @NotNull(message = "A categoria é obrigatória")
-    private Categoria categoria;
+    private Long categoriaId;
+
+    private TipoTransacao tipo;
 
     @NotNull(message = "A data é obrigatória")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -38,11 +40,15 @@ public class NovaTransacaoDTO {
         this.id = transacao.getId();
         this.descricao = transacao.getDescricao();
         this.valor = transacao.getValor();
-        this.categoria = transacao.getCategoria();
         this.data = transacao.getData();
+
+        if (transacao.getCategoria() != null) {
+            this.categoriaId = transacao.getCategoria().getId();
+            this.tipo = transacao.getTipo();
+        }
     }
 
-    public Transacao toEntity() {
-        return new Transacao(this.descricao, this.valor, this.categoria, this.data);
+    public Transacao toEntity(Categoria categoria) {
+        return new Transacao(this.descricao, this.valor, categoria, this.data);
     }
 }

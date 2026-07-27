@@ -1,6 +1,5 @@
 package WalletFlow.sistemagestaofinanceira.models;
 
-import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import jakarta.persistence.*;
 import lombok.Getter;
