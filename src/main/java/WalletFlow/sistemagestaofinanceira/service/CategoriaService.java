@@ -93,10 +93,10 @@ public class CategoriaService {
     @Transactional
     public void criarCategoriasPadrao(Usuario usuario) {
         List<Categoria> padroes = List.of(
-                new Categoria("Outros", TipoTransacao.ENTRADA, "#343232", true),
+                new Categoria("Outros", TipoTransacao.ENTRADA, "#6d6b6b", true),
                 new Categoria("Salário", TipoTransacao.ENTRADA, "#198754"),
                 new Categoria("Freelance", TipoTransacao.ENTRADA, "#20c997"),
-                new Categoria("Outros", TipoTransacao.SAIDA, "#343232", true),
+                new Categoria("Outros", TipoTransacao.SAIDA, "#6d6b6b", true),
                 new Categoria("Alimentação", TipoTransacao.SAIDA, "#dc3545"),
                 new Categoria("Transporte", TipoTransacao.SAIDA, "#fd7e14"),
                 new Categoria("Aluguel", TipoTransacao.SAIDA, "#6f42c1"),
