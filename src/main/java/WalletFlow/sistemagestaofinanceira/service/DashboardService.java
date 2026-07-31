@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -82,6 +83,7 @@ public class DashboardService {
                     categoria.getCor()
             ));
         }
+        resultado.sort(Comparator.comparing(ResumoCategoriaDTO::getValor).reversed()); //ordenar por valor decrescente
         return resultado;
     }
 
