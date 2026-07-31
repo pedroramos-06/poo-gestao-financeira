@@ -62,7 +62,7 @@
 
             <div class="col-6">
                 <label class="form-label">Tipo de transação</label>
-                <div class="d-flex btn-group is-invalid" onclick="this.classList.remove('is-invalid')">
+                <div class="d-flex btn-group">
                     <input class="btn-check" id="entrada" type="radio" name="filtroTipo" autocomplete="off" value="ENTRADA">
                     <label class="btn btn-outline-success w-100" for="entrada">Entrada</label>
 
@@ -73,12 +73,13 @@
 
             <div class="col-6">
                 <label class="form-label" for="categoria">Categoria</label>
-                <select class="form-select" id="categoria" th:field="*{categoriaId}" disabled
+                <select class="form-select" id="categoria" name="categoriaId" disabled
                         oninput="this.classList.remove('is-invalid')"
                         th:classappend="${#fields.hasErrors('categoriaId') ? 'is-invalid' : ''}">
-                    <option value="" disabled hidden>Escolha uma categoria</option>
+                    <option value="" disabled hidden th:selected="${transacao.categoriaId == null}">Escolha uma categoria</option>
                     <option th:each="cat : ${categorias}"
                             th:value="${cat.id}"
+                            th:selected="${cat.id == transacao.categoriaId}"
                             th:text="${cat.nome}"
                             th:data-tipo="${cat.tipo}"
                             th:style="'color: ' + ${cat.cor} + ';'">
