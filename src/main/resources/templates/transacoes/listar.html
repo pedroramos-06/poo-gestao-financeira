@@ -63,17 +63,6 @@
                     <input class="form-control" type="date" id="dataFim" th:field="*{dataFim}">
                 </div>
 
-                <div class="col-2">
-                    <label class="form-label" for="categoria">Categoria</label>
-                    <select class="form-select" id="categoria" th:field="*{categoria}">
-                        <option value="" selected>Todas</option>
-                        <option th:each="cat : ${categorias}"
-                                th:value="${cat.id}"
-                                th:text="${cat.nome}">
-                        </option>
-                    </select>
-                </div>
-
                 <div class="col-3">
                     <label class="form-label">Tipo de transação</label>
                     <div class="d-flex btn-group">
@@ -83,6 +72,19 @@
                         <input class="btn-check" id="saida" type="radio" th:field="*{tipo}" th:value="SAIDA" autocomplete="off">
                         <label class="btn btn-outline-danger w-100" for="saida">Saída</label>
                     </div>
+                </div>
+
+                <div class="col-2">
+                    <label class="form-label" for="categoria">Categoria</label>
+                    <select class="form-select" id="categoria" th:field="*{categoria}" disabled>
+                        <option value="" selected>Todas</option>
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.id}"
+                                th:text="${cat.nome}"
+                                th:data-tipo="${cat.tipo}"
+                                th:style="'color: ' + ${cat.cor} + ';'">
+                        </option>
+                    </select>
                 </div>
 
                 <div class="col d-flex gap-2 justify-content-end align-items-end">
@@ -135,6 +137,50 @@
             </table>
         </div>
     </main>
+    <script>
+        const tiposFiltro = document.querySelectorAll("#entrada, #saida");
+        const categoriaFiltro = document.getElementById("categoria");
+        const opcoesFiltro = categoriaFiltro.querySelectorAll("option[data-tipo]");
+
+        function atualizarCategoriasFiltro(tipo) {
+            opcoesFiltro.forEach(opcao => {
+                opcao.style.display = (!tipo || opcao.getAttribute("data-tipo") === tipo) ? "" : "none";
+            });
+        }
+
+        function mostrarTodasFiltro() {
+            tiposFiltro.forEach(t => t.checked = false);
+            categoriaFiltro.value = "";
+            categoriaFiltro.disabled = true;
+            atualizarCategoriasFiltro(null);
+        }
+
+        tiposFiltro.forEach(tipo => {
+            tipo.addEventListener("click", function() {
+                if (this.dataset.wasChecked === "true") {
+                    mostrarTodasFiltro();
+                    this.dataset.wasChecked = "false";
+                    return;
+                }
+                tiposFiltro.forEach(t => t.dataset.wasChecked = "false");
+                this.dataset.wasChecked = "true";
+            });
+
+            tipo.addEventListener("change", function() {
+                categoriaFiltro.value = "";
+                categoriaFiltro.disabled = false;
+                atualizarCategoriasFiltro(this.value);
+            });
+        });
+
+        // Restaura o estado ao recarregar a página com filtros já aplicados (GET)
+        const tipoAtivo = document.querySelector("input[name='tipo']:checked");
+        if (tipoAtivo) {
+            tipoAtivo.dataset.wasChecked = "true";
+            categoriaFiltro.disabled = false;
+            atualizarCategoriasFiltro(tipoAtivo.value);
+        }
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
