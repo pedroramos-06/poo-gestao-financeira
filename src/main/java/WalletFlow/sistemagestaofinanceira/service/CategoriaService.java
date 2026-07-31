@@ -84,6 +84,10 @@ public class CategoriaService {
             }
         }
 
+        if(!dto.getTipo().equals(categoria.getTipo())){
+            throw new EditarTipoCategoriaException();
+        }
+
         categoria.setNome(dto.getNome());
         categoria.setTipo(dto.getTipo());
         categoria.setCor(dto.getCor());

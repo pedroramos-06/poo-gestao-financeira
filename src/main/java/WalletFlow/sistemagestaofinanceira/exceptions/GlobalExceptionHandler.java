@@ -40,6 +40,15 @@ public class GlobalExceptionHandler {
         return redirectBackTo(request);
     }
 
+    @ExceptionHandler(EditarTipoCategoriaException.class)
+    public String handleEditarTipoCategoria( EditarTipoCategoriaException e,
+                                       HttpServletRequest request,
+                                       RedirectAttributes redirectAttributes) {
+        log.warn("Tentativa de editar tipo de categoria[{}]: {}", request.getRequestURI(), e.getMessage());
+        redirectAttributes.addFlashAttribute("erro", e.getMessage());
+        return redirectBackTo(request);
+    }
+
     @ExceptionHandler(Exception.class)
     public String handleGeneric(Exception e,
                                 HttpServletRequest request,
