@@ -6,6 +6,7 @@ import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
 import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaJaExisteException;
 import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaProtegidaException;
+import WalletFlow.sistemagestaofinanceira.exceptions.EditarTipoCategoriaException;
 import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
@@ -51,7 +52,7 @@ public class CategoriaService {
 
     @Transactional(readOnly = true)
     public List<Categoria> listarPorUsuario(Long usuarioId) {
-        return categoriaRepository.findByUsuarioId(usuarioId);
+        return categoriaRepository.findByUsuarioIdOrderByTipoAscIdDesc(usuarioId);
     }
 
     @Transactional

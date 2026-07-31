@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
-    List<Categoria> findByUsuarioId(Long usuarioId);
+    List<Categoria> findByUsuarioIdOrderByTipoAscIdDesc(Long usuarioId);
     Optional<Categoria> findByUsuarioIdAndNomeAndTipo(Long usuarioId, String nome, TipoTransacao tipo);
 
     @Query("""
