@@ -75,6 +75,8 @@
                 <div class="invalid-feedback" th:errors="*{tipo}"></div>
             </div>
 
+            <input th:if="${categoria.id != null}" type="hidden" th:field="*{tipo}">
+
             <div class="col-4">
                 <label class="form-label" for="cor">Cor</label>
                 <input class="form-control form-control-color w-100" id="cor" type="color"
