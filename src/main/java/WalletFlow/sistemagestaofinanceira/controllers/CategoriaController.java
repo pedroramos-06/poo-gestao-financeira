@@ -2,6 +2,7 @@ package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.NovaCategoriaDTO;
 import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaJaExisteException;
+import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaProtegidaException;
 import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.service.CategoriaService;
@@ -70,8 +71,14 @@ public class CategoriaController {
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id,
                          Model model,
-                         @AuthenticationPrincipal Usuario usuario) {
+                         @AuthenticationPrincipal Usuario usuario,
+                         RedirectAttributes redirectAttributes) {
         Categoria c = categoriaService.buscarPorId(id, usuario.getId());
+
+        if (c.isPadrao()) {
+            throw new CategoriaProtegidaException();
+        }
+
         model.addAttribute("categoria", new NovaCategoriaDTO(c));
         return "categoria/criar";
     }
