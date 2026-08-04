@@ -73,7 +73,11 @@
 
             <div class="col-6">
                 <label class="form-label" for="categoria">Categoria</label>
-                <select class="form-select" id="categoria" name="categoriaId" disabled
+                <select class="form-select" id="categoria" name="categoriaId"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Selecione o tipo de transação primeiro"
+                        disabled
                         oninput="this.classList.remove('is-invalid')"
                         th:classappend="${#fields.hasErrors('categoriaId') ? 'is-invalid' : ''}">
                     <option value="" disabled hidden th:selected="${transacao.categoriaId == null}">Escolha uma categoria</option>
@@ -116,10 +120,25 @@
         </form>
     </div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const tipos = document.querySelectorAll("input[name='filtroTipo']");
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(e => new bootstrap.Tooltip(e));
+
     const categoria = document.getElementById("categoria");
+    const tooltipCategoria = new bootstrap.Tooltip(categoria);
+    tooltipCategoria.disable(); // começa desabilitado; ativamos manualmente conforme o estado
+
+    const tipos = document.querySelectorAll("input[name='filtroTipo']");
     const opcoes = categoria.querySelectorAll("option[data-tipo]");
+
+    function definirEstadoCategoria(habilitado) {
+        categoria.disabled = !habilitado;
+        if (habilitado) {
+            tooltipCategoria.disable();
+        } else {
+            tooltipCategoria.enable();
+        }
+    }
 
     function atualizarCategorias(tipo) {
         opcoes.forEach(opcao => {
@@ -130,12 +149,12 @@
     function mostrarTodas() {
         tipos.forEach(t => t.checked = false);
         categoria.value = "";
+        definirEstadoCategoria(false);
         atualizarCategorias(null);
     }
 
     tipos.forEach(tipo => {
         tipo.addEventListener("click", function() {
-            // permite desmarcar clicando de novo no rádio já selecionado
             if (this.dataset.wasChecked === "true") {
                 mostrarTodas();
                 this.dataset.wasChecked = "false";
@@ -148,7 +167,7 @@
         tipo.addEventListener("change", function() {
             categoria.value = "";
             atualizarCategorias(this.value);
-            categoria.disabled = false;
+            definirEstadoCategoria(true);
         });
     });
 
@@ -160,11 +179,12 @@
         if (radioCorrespondente) {
             radioCorrespondente.checked = true;
             radioCorrespondente.dataset.wasChecked = "true";
-            categoria.disabled = false;
+            definirEstadoCategoria(true);
             atualizarCategorias(tipoDaCategoria);
         }
+    } else {
+        definirEstadoCategoria(false);
     }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

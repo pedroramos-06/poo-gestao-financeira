@@ -76,7 +76,11 @@
 
                 <div class="col-2">
                     <label class="form-label" for="categoria">Categoria</label>
-                    <select class="form-select" id="categoria" th:field="*{categoria}" disabled>
+                    <select class="form-select" id="categoria" th:field="*{categoria}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            data-bs-title="Selecione o tipo de transação primeiro"
+                            disabled>
                         <option value="" selected>Todas</option>
                         <option th:each="cat : ${categorias}"
                                 th:value="${cat.id}"
@@ -137,10 +141,25 @@
             </table>
         </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        const tiposFiltro = document.querySelectorAll("#entrada, #saida");
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(e => new bootstrap.Tooltip(e));
+
         const categoriaFiltro = document.getElementById("categoria");
+        const tooltipCategoriaFiltro = new bootstrap.Tooltip(categoriaFiltro);
+        tooltipCategoriaFiltro.disable(); // começa desabilitado; controlamos manualmente
+
+        const tiposFiltro = document.querySelectorAll("#entrada, #saida");
         const opcoesFiltro = categoriaFiltro.querySelectorAll("option[data-tipo]");
+
+        function definirEstadoCategoriaFiltro(habilitado) {
+            categoriaFiltro.disabled = !habilitado;
+            if (habilitado) {
+                tooltipCategoriaFiltro.disable();
+            } else {
+                tooltipCategoriaFiltro.enable();
+            }
+        }
 
         function atualizarCategoriasFiltro(tipo) {
             opcoesFiltro.forEach(opcao => {
@@ -151,7 +170,7 @@
         function mostrarTodasFiltro() {
             tiposFiltro.forEach(t => t.checked = false);
             categoriaFiltro.value = "";
-            categoriaFiltro.disabled = true;
+            definirEstadoCategoriaFiltro(false);
             atualizarCategoriasFiltro(null);
         }
 
@@ -168,7 +187,7 @@
 
             tipo.addEventListener("change", function() {
                 categoriaFiltro.value = "";
-                categoriaFiltro.disabled = false;
+                definirEstadoCategoriaFiltro(true);
                 atualizarCategoriasFiltro(this.value);
             });
         });
@@ -177,11 +196,11 @@
         const tipoAtivo = document.querySelector("input[name='tipo']:checked");
         if (tipoAtivo) {
             tipoAtivo.dataset.wasChecked = "true";
-            categoriaFiltro.disabled = false;
+            definirEstadoCategoriaFiltro(true);
             atualizarCategoriasFiltro(tipoAtivo.value);
+        } else {
+            definirEstadoCategoriaFiltro(false);
         }
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
