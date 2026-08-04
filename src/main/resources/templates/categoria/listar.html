@@ -77,13 +77,10 @@
                     </span>
                 </td>
                 <td>
-                    <div class="btn-group" th:if="${!c.padrao}">
+                    <div class="btn-group">
                         <a class="btn btn-sm btn-outline-primary" th:href="@{/categorias/{id}/editar(id=${c.id})}">Editar</a>
                         <a class="btn btn-sm btn-outline-danger" th:href="@{/categorias/{id}/excluir(id=${c.id})}">Excluir</a>
                     </div>
-                    <span class="badge text-bg-secondary" th:if="${c.padrao}" title="Categoria padrão do sistema, não pode ser editada ou excluída">
-                        Padrão
-                    </span>
                 </td>
             </tr>
             </tbody>

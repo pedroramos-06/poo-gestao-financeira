@@ -28,7 +28,7 @@ public class CategoriaController {
 
     @GetMapping
     public String listar(@AuthenticationPrincipal Usuario usuario, Model model) {
-        List<Categoria> categorias = categoriaService.listarPorUsuario(usuario.getId());
+        List<Categoria> categorias = categoriaService.listarNaoPadraoPorUsuario(usuario.getId());
         model.addAttribute("categorias", categorias);
         return "categoria/listar";
     }

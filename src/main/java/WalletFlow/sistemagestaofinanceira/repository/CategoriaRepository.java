@@ -27,4 +27,5 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     );
 
     void deleteByUsuarioId(Long usuarioId);
+    List<Categoria> findByUsuarioIdAndPadraoFalseOrderByTipoAscIdDesc(Long usuarioId);
 }

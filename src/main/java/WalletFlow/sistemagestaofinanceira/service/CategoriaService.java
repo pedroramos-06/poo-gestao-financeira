@@ -44,7 +44,8 @@ public class CategoriaService {
 
     @Transactional(readOnly = true)
     public Categoria buscarPorId(Long id, Long usuarioId) {
-        Categoria categoria = categoriaRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
+        Categoria categoria = categoriaRepository.findById(id).orElseThrow(()
+                -> new EntityNotFoundException("Categoria não encontrada"));
 
         if(!categoria.getUsuario().getId().equals(usuarioId)){
             throw new AcessoNegadoException();
@@ -122,5 +123,10 @@ public class CategoriaService {
         categoriaRepository.deleteByUsuarioId(usuarioId);
         categoriaRepository.flush();
         criarCategoriasPadrao(usuarioId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Categoria> listarNaoPadraoPorUsuario(Long usuarioId) {
+        return categoriaRepository.findByUsuarioIdAndPadraoFalseOrderByTipoAscIdDesc(usuarioId);
     }
 }
