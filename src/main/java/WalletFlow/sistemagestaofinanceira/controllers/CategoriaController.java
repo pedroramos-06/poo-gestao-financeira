@@ -49,7 +49,7 @@ public class CategoriaController {
         }
 
         try {
-            categoriaService.salvar(request, usuario);
+            categoriaService.salvar(request, usuario.getId());
             redirectAttributes.addFlashAttribute("sucesso", "Categoria criada com sucesso!");
             return "redirect:/categorias";
         } catch (CategoriaJaExisteException e) {

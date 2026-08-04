@@ -12,6 +12,7 @@ import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
 import WalletFlow.sistemagestaofinanceira.repository.CategoriaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
+import WalletFlow.sistemagestaofinanceira.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,18 +23,20 @@ import java.util.List;
 public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
     private final TransacaoRepository transacaoRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository, TransacaoRepository transacaoRepository) {
+    public CategoriaService(CategoriaRepository categoriaRepository, TransacaoRepository transacaoRepository, UsuarioRepository usuarioRepository) {
         this.categoriaRepository = categoriaRepository;
         this.transacaoRepository = transacaoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Transactional
-    public void salvar(NovaCategoriaDTO dto, Usuario usuario) throws CategoriaJaExisteException {
+    public void salvar(NovaCategoriaDTO dto, Long usuarioId) throws CategoriaJaExisteException {
         Categoria categoria = dto.toEntity();
-        categoria.setUsuario(usuario);
+        categoria.setUsuario(usuarioRepository.getReferenceById(usuarioId));
 
-        if(categoriaRepository.findByUsuarioIdAndNomeAndTipo(usuario.getId(), dto.getNome(),dto.getTipo()).isPresent()){
+        if(categoriaRepository.findByUsuarioIdAndNomeAndTipo(usuarioId, dto.getNome(),dto.getTipo()).isPresent()){
             throw new CategoriaJaExisteException();
         }
         categoriaRepository.save(categoria);
@@ -96,7 +99,9 @@ public class CategoriaService {
     }
 
     @Transactional
-    public void criarCategoriasPadrao(Usuario usuario) {
+    public void criarCategoriasPadrao(Long usuarioId) {
+        Usuario usuario = usuarioRepository.getReferenceById(usuarioId);
+
         List<Categoria> padroes = List.of(
                 new Categoria("Outros", TipoTransacao.ENTRADA, "#6d6b6b", true),
                 new Categoria("Salário", TipoTransacao.ENTRADA, "#198754"),
@@ -110,5 +115,12 @@ public class CategoriaService {
 
         padroes.forEach(c -> c.setUsuario(usuario));
         categoriaRepository.saveAll(padroes);
+    }
+
+    @Transactional
+    public void resetar(Long usuarioId) {
+        categoriaRepository.deleteByUsuarioId(usuarioId);
+        categoriaRepository.flush();
+        criarCategoriasPadrao(usuarioId);
     }
 }

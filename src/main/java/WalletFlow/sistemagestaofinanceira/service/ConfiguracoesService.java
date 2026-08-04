@@ -13,12 +13,15 @@ public class ConfiguracoesService {
     private final UsuarioRepository usuarioRepository;
     private final MetaRepository metaRepository;
     private final TransacaoRepository transacaoRepository;
+    private final CategoriaService categoriaService;
 
-    public ConfiguracoesService(UsuarioRepository usuarioRepository, MetaRepository metaRepository, TransacaoRepository transacaoRepository) {
+    public ConfiguracoesService(UsuarioRepository usuarioRepository, MetaRepository metaRepository, TransacaoRepository transacaoRepository, CategoriaService categoriaService) {
         this.usuarioRepository = usuarioRepository;
         this.metaRepository = metaRepository;
         this.transacaoRepository = transacaoRepository;
+        this.categoriaService = categoriaService;
     }
+
 
     public void editar(ConfiguracoesDTO dto, Usuario usuario) {
         usuario.setMetaPadrao(dto.getMetaPadrao());
@@ -37,5 +40,6 @@ public class ConfiguracoesService {
     public void excluirDados(Long usuarioId) {
         metaRepository.deleteByUsuarioId(usuarioId);
         transacaoRepository.deleteByUsuarioId(usuarioId);
+        categoriaService.resetar(usuarioId);
     }
 }

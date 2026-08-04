@@ -63,7 +63,7 @@ public class UsuarioService implements UserDetailsService {
                 context
         );
 
-        categoriaService.criarCategoriasPadrao(usuario);
+        categoriaService.criarCategoriasPadrao(usuario.getId());
         return usuarioSalvo;
     }
 

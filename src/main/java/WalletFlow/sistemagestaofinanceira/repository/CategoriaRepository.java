@@ -25,4 +25,6 @@ public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
             @Param("usuarioId") Long usuarioId,
             @Param("tipo") TipoTransacao tipo
     );
+
+    void deleteByUsuarioId(Long usuarioId);
 }
