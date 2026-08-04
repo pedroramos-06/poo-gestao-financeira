@@ -1,7 +1,7 @@
 package WalletFlow.sistemagestaofinanceira.dto;
 
-import WalletFlow.sistemagestaofinanceira.enums.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;

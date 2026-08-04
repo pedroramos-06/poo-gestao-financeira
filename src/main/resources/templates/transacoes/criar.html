@@ -18,6 +18,9 @@
                 <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="/categorias">Categorias</a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="/metas">Metas</a>
             </li>
             <li class="nav-item">
@@ -59,32 +62,34 @@
 
             <div class="col-6">
                 <label class="form-label">Tipo de transação</label>
-                <div class="d-flex btn-group is-invalid" onclick="this.classList.remove('is-invalid')">
-                    <input class="btn-check" id="entrada" type="radio" autocomplete="off"
-                           th:field="*{tipo}" th:value="ENTRADA">
+                <div class="d-flex btn-group">
+                    <input class="btn-check" id="entrada" type="radio" name="filtroTipo" autocomplete="off" value="ENTRADA">
                     <label class="btn btn-outline-success w-100" for="entrada">Entrada</label>
 
-                    <input class="btn-check" id="saida" type="radio" autocomplete="off"
-                           th:field="*{tipo}" th:value="SAIDA">
+                    <input class="btn-check" id="saida" type="radio" name="filtroTipo" autocomplete="off" value="SAIDA">
                     <label class="btn btn-outline-danger w-100" for="saida">Saída</label>
                 </div>
-                <div class="invalid-feedback" th:errors="*{tipo}"></div>
             </div>
 
             <div class="col-6">
                 <label class="form-label" for="categoria">Categoria</label>
-                <select class="form-select" id="categoria" name="categoria" disabled
+                <select class="form-select" id="categoria" name="categoriaId"
+                        data-bs-toggle="tooltip"
+                        data-bs-placement="top"
+                        data-bs-title="Selecione o tipo de transação primeiro"
+                        disabled
                         oninput="this.classList.remove('is-invalid')"
-                        th:classappend="${#fields.hasErrors('categoria') ? 'is-invalid' : ''}">
-                    <option value="" disabled hidden th:selected="*{categoria == null}">Escolha uma categoria</option>
-                    <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
-                            th:value="${cat}"
-                            th:text="${cat.descricao}"
-                            th:selected="*{categoria} == ${cat}"
-                            th:data-tipo="${cat.tipoTransacao.name()}">
+                        th:classappend="${#fields.hasErrors('categoriaId') ? 'is-invalid' : ''}">
+                    <option value="" disabled hidden th:selected="${transacao.categoriaId == null}">Escolha uma categoria</option>
+                    <option th:each="cat : ${categorias}"
+                            th:value="${cat.id}"
+                            th:selected="${cat.id == transacao.categoriaId}"
+                            th:text="${cat.nome}"
+                            th:data-tipo="${cat.tipo}"
+                            th:style="'color: ' + ${cat.cor} + ';'">
                     </option>
                 </select>
-                <div class="invalid-feedback" th:errors="*{categoria}"></div>
+                <div class="invalid-feedback" th:errors="*{categoriaId}"></div>
             </div>
 
             <div class="col-6">
@@ -115,35 +120,71 @@
         </form>
     </div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const tipos = document.querySelectorAll("input[name='tipo']");
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(e => new bootstrap.Tooltip(e));
+
     const categoria = document.getElementById("categoria");
+    const tooltipCategoria = new bootstrap.Tooltip(categoria);
+    tooltipCategoria.disable(); // começa desabilitado; ativamos manualmente conforme o estado
+
+    const tipos = document.querySelectorAll("input[name='filtroTipo']");
     const opcoes = categoria.querySelectorAll("option[data-tipo]");
 
-    function atualizarCategorias(tipo) {
-        categoria.disabled = false;
+    function definirEstadoCategoria(habilitado) {
+        categoria.disabled = !habilitado;
+        if (habilitado) {
+            tooltipCategoria.disable();
+        } else {
+            tooltipCategoria.enable();
+        }
+    }
 
+    function atualizarCategorias(tipo) {
         opcoes.forEach(opcao => {
-            if (opcao.getAttribute("data-tipo") === tipo) {
-                opcao.style.display = "";
-            } else {
-                opcao.style.display = "none";
-            }
+            opcao.style.display = (!tipo || opcao.getAttribute("data-tipo") === tipo) ? "" : "none";
         });
+    }
+
+    function mostrarTodas() {
+        tipos.forEach(t => t.checked = false);
+        categoria.value = "";
+        definirEstadoCategoria(false);
+        atualizarCategorias(null);
     }
 
     tipos.forEach(tipo => {
+        tipo.addEventListener("click", function() {
+            if (this.dataset.wasChecked === "true") {
+                mostrarTodas();
+                this.dataset.wasChecked = "false";
+                return;
+            }
+            tipos.forEach(t => t.dataset.wasChecked = "false");
+            this.dataset.wasChecked = "true";
+        });
+
         tipo.addEventListener("change", function() {
             categoria.value = "";
             atualizarCategorias(this.value);
+            definirEstadoCategoria(true);
         });
     });
 
-    const tipoJaMarcado = document.querySelector("input[name='tipo']:checked");
-    if (tipoJaMarcado) {
-        atualizarCategorias(tipoJaMarcado.value);
+    const categoriaSelecionada = categoria.querySelector("option[selected]");
+
+    if (categoriaSelecionada && categoriaSelecionada.dataset.tipo) {
+        const tipoDaCategoria = categoriaSelecionada.dataset.tipo;
+        const radioCorrespondente = document.querySelector(`input[name='filtroTipo'][value='${tipoDaCategoria}']`);
+        if (radioCorrespondente) {
+            radioCorrespondente.checked = true;
+            radioCorrespondente.dataset.wasChecked = "true";
+            definirEstadoCategoria(true);
+            atualizarCategorias(tipoDaCategoria);
+        }
+    } else {
+        definirEstadoCategoria(false);
     }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

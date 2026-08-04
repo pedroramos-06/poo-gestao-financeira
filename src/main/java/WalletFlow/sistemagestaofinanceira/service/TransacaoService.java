@@ -3,8 +3,10 @@ package WalletFlow.sistemagestaofinanceira.service;
 import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
+import WalletFlow.sistemagestaofinanceira.repository.CategoriaRepository;
 import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,14 +17,21 @@ import java.util.List;
 @Service
 public class TransacaoService {
     private final TransacaoRepository transacaoRepository;
+    private final CategoriaRepository categoriaRepository; // 1. Injete a CategoriaRepository aqui
 
-    public TransacaoService(TransacaoRepository transacaoRepository) {
+    public TransacaoService(TransacaoRepository transacaoRepository, CategoriaRepository categoriaRepository) {
         this.transacaoRepository = transacaoRepository;
+        this.categoriaRepository = categoriaRepository;
     }
+
     @Transactional
     public void salvar(NovaTransacaoDTO dto, Usuario usuario) {
-        Transacao transacao = dto.toEntity();
+        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
+
+        Transacao transacao = dto.toEntity(categoria);
         transacao.setUsuario(usuario);
+
         transacaoRepository.save(transacao);
     }
 
@@ -60,8 +69,10 @@ public class TransacaoService {
     public void editar(NovaTransacaoDTO dto, Long usuarioId) {
         Transacao transacao = buscarPorId(dto.getId(), usuarioId);
 
-        transacao.setCategoria(dto.getCategoria());
-        transacao.setTipo(dto.getTipo());
+        Categoria categoria = categoriaRepository.findById(dto.getCategoriaId())
+                .orElseThrow(() -> new EntityNotFoundException("Categoria não encontrada"));
+
+        transacao.setCategoria(categoria);
         transacao.setDescricao(dto.getDescricao());
         transacao.setValor(dto.getValor());
         transacao.setData(dto.getData());

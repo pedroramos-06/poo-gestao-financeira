@@ -1,7 +1,7 @@
 package WalletFlow.sistemagestaofinanceira.dto;
 
-import WalletFlow.sistemagestaofinanceira.enums.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 public class NovaTransacaoDTO {
-    private Long id; //Caso seja edição
+    private Long id; // Utilizado na edição
 
     @NotBlank(message = "A descrição é obrigatória")
     @Size(max = 75, message = "A descrição deve ter no máximo 75 caracteres")
@@ -27,11 +27,10 @@ public class NovaTransacaoDTO {
     @Digits(integer = 8, fraction = 2, message = "O valor deve ter no máximo 8 dígitos inteiros e 2 decimais")
     private BigDecimal valor;
 
-    @NotNull(message = "O tipo da transação é obrigatório")
-    private TipoTransacao tipo;
-
     @NotNull(message = "A categoria é obrigatória")
-    private Categoria categoria;
+    private Long categoriaId;
+
+    private TipoTransacao tipo;
 
     @NotNull(message = "A data é obrigatória")
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
@@ -41,12 +40,15 @@ public class NovaTransacaoDTO {
         this.id = transacao.getId();
         this.descricao = transacao.getDescricao();
         this.valor = transacao.getValor();
-        this.tipo = transacao.getTipo();
-        this.categoria = transacao.getCategoria();
         this.data = transacao.getData();
+
+        if (transacao.getCategoria() != null) {
+            this.categoriaId = transacao.getCategoria().getId();
+            this.tipo = transacao.getTipo();
+        }
     }
 
-    public Transacao toEntity() {
-        return new Transacao(this.descricao, this.valor, this.tipo, this.categoria, this.data);
+    public Transacao toEntity(Categoria categoria) {
+        return new Transacao(this.descricao, this.valor, categoria, this.data);
     }
 }

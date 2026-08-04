@@ -15,17 +15,24 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class UsuarioService implements UserDetailsService {
 
     private final UsuarioRepository repository;
     private final PasswordEncoder passwordEncoder;
     private final HttpServletRequest request;
+    private final CategoriaService categoriaService;
 
-    public UsuarioService(UsuarioRepository repository, PasswordEncoder passwordEncoder, HttpServletRequest request) {
+    public UsuarioService(UsuarioRepository repository,
+                          PasswordEncoder passwordEncoder,
+                          HttpServletRequest request,
+                          CategoriaService categoriaService) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
         this.request = request;
+        this.categoriaService = categoriaService;
     }
 
     @Transactional
@@ -56,6 +63,7 @@ public class UsuarioService implements UserDetailsService {
                 context
         );
 
+        categoriaService.criarCategoriasPadrao(usuario.getId());
         return usuarioSalvo;
     }
 

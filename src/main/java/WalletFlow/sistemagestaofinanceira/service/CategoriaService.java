@@ -1,0 +1,132 @@
+package WalletFlow.sistemagestaofinanceira.service;
+
+import WalletFlow.sistemagestaofinanceira.dto.NovaCategoriaDTO;
+
+import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
+import WalletFlow.sistemagestaofinanceira.exceptions.AcessoNegadoException;
+import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaJaExisteException;
+import WalletFlow.sistemagestaofinanceira.exceptions.CategoriaProtegidaException;
+import WalletFlow.sistemagestaofinanceira.exceptions.EditarTipoCategoriaException;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
+import WalletFlow.sistemagestaofinanceira.models.Transacao;
+import WalletFlow.sistemagestaofinanceira.models.Usuario;
+import WalletFlow.sistemagestaofinanceira.repository.CategoriaRepository;
+import WalletFlow.sistemagestaofinanceira.repository.TransacaoRepository;
+import WalletFlow.sistemagestaofinanceira.repository.UsuarioRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class CategoriaService {
+    private final CategoriaRepository categoriaRepository;
+    private final TransacaoRepository transacaoRepository;
+    private final UsuarioRepository usuarioRepository;
+
+    public CategoriaService(CategoriaRepository categoriaRepository, TransacaoRepository transacaoRepository, UsuarioRepository usuarioRepository) {
+        this.categoriaRepository = categoriaRepository;
+        this.transacaoRepository = transacaoRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    @Transactional
+    public void salvar(NovaCategoriaDTO dto, Long usuarioId) throws CategoriaJaExisteException {
+        Categoria categoria = dto.toEntity();
+        categoria.setUsuario(usuarioRepository.getReferenceById(usuarioId));
+
+        if(categoriaRepository.findByUsuarioIdAndNomeAndTipo(usuarioId, dto.getNome(),dto.getTipo()).isPresent()){
+            throw new CategoriaJaExisteException();
+        }
+        categoriaRepository.save(categoria);
+    }
+
+    @Transactional(readOnly = true)
+    public Categoria buscarPorId(Long id, Long usuarioId) {
+        Categoria categoria = categoriaRepository.findById(id).orElseThrow(()
+                -> new EntityNotFoundException("Categoria não encontrada"));
+
+        if(!categoria.getUsuario().getId().equals(usuarioId)){
+            throw new AcessoNegadoException();
+        }
+
+        return categoria;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Categoria> listarPorUsuario(Long usuarioId) {
+        return categoriaRepository.findByUsuarioIdOrderByTipoAscIdDesc(usuarioId);
+    }
+
+    @Transactional
+    public void excluir(Long id, Long usuarioId) throws CategoriaProtegidaException {
+        Categoria categoria = buscarPorId(id, usuarioId); //validar permissão
+
+        if (categoria.isPadrao()) {
+            throw new CategoriaProtegidaException();
+        }
+
+        List<Transacao> transacoes = transacaoRepository.findByCategoriaId(id);
+        transacoes.forEach(t -> t.setCategoria(categoriaRepository.findPadraoByUsuarioIdAndTipo(usuarioId, t.getTipo())));
+        transacaoRepository.saveAll(transacoes);
+
+        categoriaRepository.deleteById(id);
+    }
+
+    @Transactional
+    public void editar(NovaCategoriaDTO dto, Long usuarioId) throws CategoriaJaExisteException {
+        Categoria categoria = buscarPorId(dto.getId(), usuarioId); //validar permissão
+
+        if (categoria.isPadrao()) {
+            throw new CategoriaProtegidaException();
+        }
+
+        if(!dto.getNome().equals(categoria.getNome())) {
+            if(categoriaRepository.findByUsuarioIdAndNomeAndTipo(usuarioId, dto.getNome(), dto.getTipo()).isPresent()) {
+                throw new CategoriaJaExisteException();
+            }
+        }
+
+        if(!dto.getTipo().equals(categoria.getTipo())){
+            throw new EditarTipoCategoriaException();
+        }
+
+        categoria.setNome(dto.getNome());
+        categoria.setTipo(dto.getTipo());
+        categoria.setCor(dto.getCor());
+
+        categoriaRepository.save(categoria);
+    }
+
+    @Transactional
+    public void criarCategoriasPadrao(Long usuarioId) {
+        Usuario usuario = usuarioRepository.getReferenceById(usuarioId);
+
+        List<Categoria> padroes = List.of(
+                new Categoria("Outros", TipoTransacao.ENTRADA, "#6d6b6b", true),
+                new Categoria("Salário", TipoTransacao.ENTRADA, "#198754"),
+                new Categoria("Freelance", TipoTransacao.ENTRADA, "#20c997"),
+                new Categoria("Outros", TipoTransacao.SAIDA, "#6d6b6b", true),
+                new Categoria("Alimentação", TipoTransacao.SAIDA, "#dc3545"),
+                new Categoria("Transporte", TipoTransacao.SAIDA, "#fd7e14"),
+                new Categoria("Aluguel", TipoTransacao.SAIDA, "#6f42c1"),
+                new Categoria("Lazer", TipoTransacao.SAIDA, "#0dcaf0")
+        );
+
+        padroes.forEach(c -> c.setUsuario(usuario));
+        categoriaRepository.saveAll(padroes);
+    }
+
+    @Transactional
+    public void resetar(Long usuarioId) {
+        categoriaRepository.deleteByUsuarioId(usuarioId);
+        categoriaRepository.flush();
+        criarCategoriasPadrao(usuarioId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Categoria> listarNaoPadraoPorUsuario(Long usuarioId) {
+        return categoriaRepository.findByUsuarioIdAndPadraoFalseOrderByTipoAscIdDesc(usuarioId);
+    }
+}

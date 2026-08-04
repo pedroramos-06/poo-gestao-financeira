@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WalletFlow - Listar Metas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <title>WalletFlow - Listar Categorias</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link th:href="@{/styles.css}" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100 bg-body-tertiary">
 <nav class="navbar navbar-expand px-5 bg-dark border-bottom" data-bs-theme="dark">
@@ -16,10 +18,10 @@
                 <a class="nav-link" href="/dashboard">Dashboard</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/categorias">Categorias</a>
+                <a class="nav-link active" href="/categorias">Categorias</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link active" href="/metas">Metas</a>
+                <a class="nav-link" href="/metas">Metas</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/transacoes">Transações</a>
@@ -43,36 +45,46 @@
 
     <div class="d-flex justify-content-between align-items-center">
         <div>
-            <h2 class="mb-1">Metas</h2>
-            <p class="text-muted mb-0">Liste, filtre, edite ou exclua suas metas</p>
+            <h2 class="mb-1">Categorias</h2>
+            <p class="text-muted mb-0">Liste, edite ou exclua suas categorias</p>
         </div>
 
-        <a href="/metas/criar" class="btn btn-success">+ Nova Meta</a>
+        <a href="/categorias/criar" class="btn btn-success">+ Nova Categoria</a>
     </div>
 
+    <!-- Categorias de Entrada -->
     <div class="card overflow-hidden">
         <table class="table table-hover mb-0 text-center align-middle">
             <thead class="table-dark ">
             <tr>
-                <th scope="col">Mês / Período</th>
-                <th scope="col">Limite Estipulado</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Tipo</th>
                 <th scope="col">Ações</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="m : ${metas}">
-                <td th:text="${#temporals.format(m.data, 'MMMM ''de'' yyyy')}"></td>
-                <td class="fw-bold" th:text="|R$ ${#numbers.formatDecimal(m.valor, 1, 'POINT', 2, 'COMMA')}|"></td>
+            <tr th:each="c : ${categorias}">
+                <td>
+                    <span class="badge badge-categoria"
+                          th:style="|--cor-categoria: ${c.cor}|"
+                          th:text="${c.nome}">
+                    </span>
+                </td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${c.tipo.descricao == 'Entrada' ? 'text-bg-success' : 'text-bg-danger'}"
+                          th:text="${c.tipo.descricao}">
+                    </span>
+                </td>
                 <td>
                     <div class="btn-group">
-                        <a class="btn btn-sm btn-outline-primary" th:href="@{/metas/{id}/editar(id=${m.id})}">Editar</a>
-                        <a class="btn btn-sm btn-outline-danger" th:href="@{/metas/{id}/excluir(id=${m.id})}">Excluir</a>
+                        <a class="btn btn-sm btn-outline-primary" th:href="@{/categorias/{id}/editar(id=${c.id})}">Editar</a>
+                        <a class="btn btn-sm btn-outline-danger" th:href="@{/categorias/{id}/excluir(id=${c.id})}">Excluir</a>
                     </div>
                 </td>
             </tr>
             </tbody>
         </table>
-    </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>

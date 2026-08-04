@@ -2,7 +2,7 @@ package WalletFlow.sistemagestaofinanceira.service;
 
 import WalletFlow.sistemagestaofinanceira.dto.DashboardDTO;
 import WalletFlow.sistemagestaofinanceira.dto.ResumoCategoriaDTO;
-import WalletFlow.sistemagestaofinanceira.enums.Categoria;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.enums.TipoTransacao;
 import WalletFlow.sistemagestaofinanceira.models.Meta;
 import WalletFlow.sistemagestaofinanceira.repository.MetaRepository;
@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -22,11 +23,13 @@ public class DashboardService {
 
     private final TransacaoRepository transacaoRepository;
     private final MetaRepository metaRepository;
+    private final CategoriaService categoriaService;
     private final UsuarioRepository usuarioRepository;
 
-    public DashboardService(TransacaoRepository transacaoRepository, MetaRepository metaRepository, UsuarioRepository usuarioRepository) {
+    public DashboardService(TransacaoRepository transacaoRepository, MetaRepository metaRepository, CategoriaService categoriaService, UsuarioRepository usuarioRepository) {
         this.transacaoRepository = transacaoRepository;
         this.metaRepository = metaRepository;
+        this.categoriaService = categoriaService;
         this.usuarioRepository = usuarioRepository;
     }
 
@@ -53,8 +56,9 @@ public class DashboardService {
     public List<ResumoCategoriaDTO> getResumoGastosPorCategoria(Long usuarioId, YearMonth periodo){
         List<ResumoCategoriaDTO> resultado = new ArrayList<>();
         BigDecimal totalSaidas = getSaidas(usuarioId, periodo);
+        List<Categoria> categorias = categoriaService.listarPorUsuario(usuarioId);
 
-        for (Categoria categoria : Categoria.values()) {
+        for (Categoria categoria : categorias) {
             BigDecimal valorCategoria = transacaoRepository.somarPorTipo(
                     usuarioId,
                     categoria,
@@ -73,12 +77,13 @@ public class DashboardService {
             }
 
             resultado.add(new ResumoCategoriaDTO(
-                    categoria.getDescricao(),
+                    categoria.getNome(),
                     valorCategoria,
                     percentual,
-                    categoria.getCorHex()
+                    categoria.getCor()
             ));
         }
+        resultado.sort(Comparator.comparing(ResumoCategoriaDTO::getValor).reversed()); //ordenar por valor decrescente
         return resultado;
     }
 
@@ -109,7 +114,7 @@ public class DashboardService {
     }
 
     private double calcularMetaAtingida(BigDecimal saidas, BigDecimal meta) {
-        if (meta.compareTo(BigDecimal.ZERO) <= 0) {
+        if (meta == null || meta.compareTo(BigDecimal.ZERO) <= 0) {
             return 0.0;
         }
         return saidas

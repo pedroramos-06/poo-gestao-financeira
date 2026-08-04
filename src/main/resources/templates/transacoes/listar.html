@@ -17,6 +17,9 @@
                     <a class="nav-link" href="/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/categorias">Categorias</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/metas">Metas</a>
                 </li>
                 <li class="nav-item">
@@ -60,17 +63,6 @@
                     <input class="form-control" type="date" id="dataFim" th:field="*{dataFim}">
                 </div>
 
-                <div class="col-2">
-                    <label class="form-label" for="categoria">Categoria</label>
-                    <select class="form-select" id="categoria" th:field="*{categoria}">
-                        <option value="" selected>Todas</option>
-                        <option th:each="cat : ${T(WalletFlow.sistemagestaofinanceira.enums.Categoria).values()}"
-                                th:value="${cat}"
-                                th:text="${cat.descricao}">
-                        </option>
-                    </select>
-                </div>
-
                 <div class="col-3">
                     <label class="form-label">Tipo de transação</label>
                     <div class="d-flex btn-group">
@@ -80,6 +72,23 @@
                         <input class="btn-check" id="saida" type="radio" th:field="*{tipo}" th:value="SAIDA" autocomplete="off">
                         <label class="btn btn-outline-danger w-100" for="saida">Saída</label>
                     </div>
+                </div>
+
+                <div class="col-2">
+                    <label class="form-label" for="categoria">Categoria</label>
+                    <select class="form-select" id="categoria" th:field="*{categoria}"
+                            data-bs-toggle="tooltip"
+                            data-bs-placement="top"
+                            data-bs-title="Selecione o tipo de transação primeiro"
+                            disabled>
+                        <option value="" selected>Todas</option>
+                        <option th:each="cat : ${categorias}"
+                                th:value="${cat.id}"
+                                th:text="${cat.nome}"
+                                th:data-tipo="${cat.tipo}"
+                                th:style="'color: ' + ${cat.cor} + ';'">
+                        </option>
+                    </select>
                 </div>
 
                 <div class="col d-flex gap-2 justify-content-end align-items-end">
@@ -107,8 +116,8 @@
                     <td class="text-start" th:text="${t.descricao}"></td>
                     <td>
                         <span class="badge badge-categoria"
-                              th:style="|--cor-categoria: ${t.categoria.corHex}|"
-                              th:text="${t.categoria.descricao}">
+                              th:style="|--cor-categoria: ${t.categoria.cor}|"
+                              th:text="${t.categoria.nome}">
                         </span>
                     </td>
                     <td>
@@ -132,7 +141,66 @@
             </table>
         </div>
     </main>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(e => new bootstrap.Tooltip(e));
+
+        const categoriaFiltro = document.getElementById("categoria");
+        const tooltipCategoriaFiltro = new bootstrap.Tooltip(categoriaFiltro);
+        tooltipCategoriaFiltro.disable(); // começa desabilitado; controlamos manualmente
+
+        const tiposFiltro = document.querySelectorAll("#entrada, #saida");
+        const opcoesFiltro = categoriaFiltro.querySelectorAll("option[data-tipo]");
+
+        function definirEstadoCategoriaFiltro(habilitado) {
+            categoriaFiltro.disabled = !habilitado;
+            if (habilitado) {
+                tooltipCategoriaFiltro.disable();
+            } else {
+                tooltipCategoriaFiltro.enable();
+            }
+        }
+
+        function atualizarCategoriasFiltro(tipo) {
+            opcoesFiltro.forEach(opcao => {
+                opcao.style.display = (!tipo || opcao.getAttribute("data-tipo") === tipo) ? "" : "none";
+            });
+        }
+
+        function mostrarTodasFiltro() {
+            tiposFiltro.forEach(t => t.checked = false);
+            categoriaFiltro.value = "";
+            definirEstadoCategoriaFiltro(false);
+            atualizarCategoriasFiltro(null);
+        }
+
+        tiposFiltro.forEach(tipo => {
+            tipo.addEventListener("click", function() {
+                if (this.dataset.wasChecked === "true") {
+                    mostrarTodasFiltro();
+                    this.dataset.wasChecked = "false";
+                    return;
+                }
+                tiposFiltro.forEach(t => t.dataset.wasChecked = "false");
+                this.dataset.wasChecked = "true";
+            });
+
+            tipo.addEventListener("change", function() {
+                categoriaFiltro.value = "";
+                definirEstadoCategoriaFiltro(true);
+                atualizarCategoriasFiltro(this.value);
+            });
+        });
+
+        // Restaura o estado ao recarregar a página com filtros já aplicados (GET)
+        const tipoAtivo = document.querySelector("input[name='tipo']:checked");
+        if (tipoAtivo) {
+            tipoAtivo.dataset.wasChecked = "true";
+            definirEstadoCategoriaFiltro(true);
+            atualizarCategoriasFiltro(tipoAtivo.value);
+        } else {
+            definirEstadoCategoriaFiltro(false);
+        }
+    </script>
 </body>
 </html>

@@ -2,8 +2,10 @@ package WalletFlow.sistemagestaofinanceira.controllers;
 
 import WalletFlow.sistemagestaofinanceira.dto.FiltrosTransacaoDTO;
 import WalletFlow.sistemagestaofinanceira.dto.NovaTransacaoDTO;
+import WalletFlow.sistemagestaofinanceira.models.Categoria;
 import WalletFlow.sistemagestaofinanceira.models.Transacao;
 import WalletFlow.sistemagestaofinanceira.models.Usuario;
+import WalletFlow.sistemagestaofinanceira.service.CategoriaService;
 import WalletFlow.sistemagestaofinanceira.service.TransacaoService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,9 +21,16 @@ import java.util.List;
 @RequestMapping("/transacoes")
 public class TransacaoController {
     private final TransacaoService transacaoService;
+    private final CategoriaService categoriaService;
 
-    public TransacaoController(TransacaoService transacaoService) {
+    public TransacaoController(TransacaoService transacaoService, CategoriaService categoriaService) {
         this.transacaoService = transacaoService;
+        this.categoriaService = categoriaService;
+    }
+
+    @ModelAttribute("categorias")
+    public List<Categoria> adicionarCategorias(@AuthenticationPrincipal Usuario usuario) {
+        return categoriaService.listarPorUsuario(usuario.getId());
     }
 
     @GetMapping
@@ -34,7 +43,7 @@ public class TransacaoController {
     }
 
     @GetMapping("/criar")
-    public String criar(Model model) {
+    public String criar(@AuthenticationPrincipal Usuario usuario, Model model) {
         model.addAttribute("transacao", new NovaTransacaoDTO());
         return "transacoes/criar";
     }
@@ -76,6 +85,7 @@ public class TransacaoController {
     @PutMapping
     public String atualizar(@Valid @ModelAttribute("transacao") NovaTransacaoDTO request,
                             BindingResult result,
+                            Model model,
                             @AuthenticationPrincipal Usuario usuario,
                             RedirectAttributes redirectAttributes) {
         if (result.hasErrors()) {
